@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Snake | Play Online</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1 class="game-title">RETRO SNAKE</h1>
+
+        <div id="gameOverOverlay" class="overlay">
+            <h1>GAME OVER</h1>
+            <p id="finalScoreText">Score: 0</p>
+            <p id="highScoreText">High Score: 0</p>
+            <button class="btn start-btn" onclick="startGame()">Play Again 🐍</button>
+            <br>
+            <a href="../index.html" class="back-link">Back to Hub</a>
+        </div>
+
+        <div class="header">
+            <h2 id="scoreDisplay">Apples: 0</h2>
+        </div>
+
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+        <div class="ui-layer">
+            <button class="btn start-btn" onclick="startGame()">▶ Start</button>
+        </div>
+
+        <div class="instructions">
+            <p>Use <strong>Arrow Keys</strong> or <strong>Swipe</strong> to turn</p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
