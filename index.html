@@ -16,7 +16,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             margin: 0; 
             padding: 80px 20px;
-            overflow-x: hidden; /* Prevents side-scrolling from the dancers */
+            overflow-x: hidden;
         }
 
         h1 { 
@@ -32,27 +32,33 @@
         /* --- 2. BACKGROUND DANCERS --- */
         .bg-dancer {
             position: fixed;
-            bottom: 50px;
-            width: 180px; /* Size of the GIF */
-            z-index: -1;   /* Behind the cards */
+            /* MOVED UP: Changed from 50px to 180px */
+            bottom: 180px; 
+            width: 200px; 
+            z-index: -1;
             pointer-events: none;
             opacity: 0.8;
-            /* Animation to make them pulse and dance slightly */
-            animation: pulse-dance 2s infinite alternate ease-in-out;
         }
 
         .giraffe-left {
             left: 5%;
+            animation: pulse-dance 2s infinite alternate ease-in-out;
         }
 
         .bee-right {
             right: 5%;
-            transform: scaleX(-1); /* Flips the bee to face the cards */
+            /* Keeps the bee flipped while animating */
+            animation: pulse-dance-flipped 2s infinite alternate ease-in-out;
         }
 
         @keyframes pulse-dance {
             0% { transform: scale(1) translateY(0); }
-            100% { transform: scale(1.1) translateY(-10px); }
+            100% { transform: scale(1.1) translateY(-20px); }
+        }
+
+        @keyframes pulse-dance-flipped {
+            0% { transform: scaleX(-1) scale(1) translateY(0); }
+            100% { transform: scaleX(-1) scale(1.1) translateY(-20px); }
         }
 
         /* --- 3. THE GRID & CARDS --- */
@@ -74,12 +80,12 @@
             color: white; 
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             width: 320px; 
-            background: rgba(46, 10, 22, 0.8); /* Slightly darker for readability */
+            background: rgba(46, 10, 22, 0.8);
             display: flex;
             flex-direction: column;
             align-items: center;
             box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            backdrop-filter: blur(5px); /* Modern blur effect */
+            backdrop-filter: blur(5px);
         }
 
         .card span { 
@@ -108,23 +114,21 @@
         .card h2 { margin: 15px 0; font-size: 2rem; }
         .card p { font-size: 1.1rem; opacity: 0.9; line-height: 1.4; }
 
-        /* --- 4. MOBILE ADJUSTMENTS --- */
         @media (max-width: 900px) {
-            .bg-dancer { width: 100px; opacity: 0.4; } /* Smaller on tablets */
+            .bg-dancer { width: 120px; bottom: 100px; opacity: 0.4; }
         }
 
         @media (max-width: 600px) {
             h1 { font-size: 2.5rem; }
             .card { width: 90%; padding: 40px 20px; }
-            .bg-dancer { display: none; } /* Hide on small phones to keep it clean */
+            .bg-dancer { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3Y2ZHF5NmR3eG05Z2Z5YmR3eG05Z2Z5YmR3eG05Z2Z5YmR3eG05ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/J5jbADp7ORYELvG67j/giphy.gif" class="bg-dancer giraffe-left" alt="Dancer 1">
-    
-    <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3Y2ZHF5NmR3eG05Z2Z5YmR3eG05Z2Z5YmR3eG05Z2Z5YmR3eG05ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/J5jbADp7ORYELvG67j/giphy.gif" class="bg-dancer bee-right" alt="Dancer 2">
+    <img src="Giraffe Floss Dance.gif" class="bg-dancer giraffe-left" alt="Giraffe">
+    <img src="download.gif" class="bg-dancer bee-right" alt="Bee">
 
     <h1>MY GAMING PORTAL</h1>
     
