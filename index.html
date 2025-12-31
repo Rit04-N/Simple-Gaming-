@@ -93,15 +93,37 @@
         .snake-card { border-color: #2ecc71; background: rgba(10, 46, 25, 0.8); }
         .duck-card { border-color: #3498db; background: rgba(10, 31, 46, 0.8); }
 
-        .card:hover { 
+        .card:hover:not(.disabled) { 
             transform: translateY(-15px) scale(1.05); 
             color: black; 
         }
 
         .bunny-card:hover { background: #ff4d6d; box-shadow: 0 0 40px rgba(255, 77, 109, 0.4); }
         .snake-card:hover { background: #2ecc71; box-shadow: 0 0 40px rgba(46, 204, 113, 0.4); }
-        .duck-card:hover { background: #3498db; box-shadow: 0 0 40px rgba(52, 152, 219, 0.4); }
         
+        /* --- NEW: Maintenance Styles for Duck Card --- */
+        .card.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+            filter: saturate(0.4);
+        }
+
+        .status-badge {
+            margin-top: 15px;
+            background: #3498db;
+            color: white;
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            animation: badge-pulse 1.5s infinite alternate;
+        }
+
+        @keyframes badge-pulse {
+            from { box-shadow: 0 0 5px rgba(52, 152, 219, 0.4); }
+            to { box-shadow: 0 0 15px rgba(52, 152, 219, 0.9); }
+        }
+
         .card h2 { margin: 10px 0; font-size: 1.8rem; }
         .card p { font-size: 1rem; opacity: 0.9; line-height: 1.4; }
 
@@ -150,12 +172,13 @@
         </div>
 
         <div class="card-group">
-            <a href="duck-rescue/index.html" class="card duck-card">
+            <div class="card duck-card disabled">
                 <span>🦢</span>
                 <h2>Duck Rescue</h2>
                 <p>Lead the babies to the nest! Avoid the 🐟!</p>
-            </a>
-            <img src="dance.gif" class="under-card-gif" alt="Duck Under">
+                <div class="status-badge">ONLINE SOON</div>
+            </div>
+            <img src="dance.gif" class="under-card-gif" alt="Duck Under" style="filter: grayscale(1); opacity: 0.5;">
         </div>
     </div>
 
