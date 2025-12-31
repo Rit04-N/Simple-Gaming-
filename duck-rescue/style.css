@@ -3,6 +3,7 @@
     --water: #3498db;
     --accent: #f1c40f;
     --danger: #e74c3c;
+    --nest-green: #2ecc71;
 }
 
 body {
@@ -15,10 +16,16 @@ body {
     align-items: center;
     min-height: 100vh;
     overflow: hidden;
-    touch-action: none; /* Critical for mobile swipes */
+    /* Prevents the screen from moving while swiping on mobile */
+    touch-action: none; 
 }
 
-.main-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; }
+.main-wrapper { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    width: 100%; 
+}
 
 .game-container {
     background: var(--pond);
@@ -32,11 +39,29 @@ body {
     box-shadow: 0 10px 50px rgba(0,0,0,0.5);
 }
 
-.game-title { color: var(--accent); margin: 5px 0; text-shadow: 2px 2px #000; font-size: 1.8rem; }
+.game-title { 
+    color: var(--accent); 
+    margin: 5px 0; 
+    text-shadow: 2px 2px #000; 
+    font-size: 1.8rem; 
+    letter-spacing: 1px;
+}
 
-.header { display: flex; justify-content: space-around; margin-bottom: 10px; font-weight: bold; }
+/* --- The Header Stats --- */
+.header { 
+    display: flex; 
+    justify-content: space-around; 
+    margin-bottom: 10px; 
+    font-weight: bold; 
+    background: rgba(0,0,0,0.2);
+    padding: 5px;
+    border-radius: 10px;
+}
 
-/* Boost Bar Styling */
+.stat-box { font-size: 0.9rem; }
+.stat-box span { color: var(--accent); }
+
+/* --- The Boost/Stamina Bar --- */
 .boost-container {
     width: 100%;
     height: 10px;
@@ -44,27 +69,32 @@ body {
     border-radius: 5px;
     margin-bottom: 10px;
     overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.2);
 }
+
 #boostBar {
     width: 100%;
     height: 100%;
-    background: var(--accent);
+    background: linear-gradient(to right, var(--accent), #e67e22);
     transition: width 0.1s linear;
 }
 
+/* --- The Pond (Canvas) --- */
 canvas {
     background: var(--water);
     display: block;
     margin: auto;
     border-radius: 15px;
-    width: 100% !important;
+    width: 100% !important; /* Makes it responsive */
     height: auto;
     aspect-ratio: 1 / 1;
     box-shadow: inset 0 0 50px rgba(0,0,0,0.3);
+    cursor: crosshair;
 }
 
+/* --- The Pause/Game Over Menu --- */
 .overlay {
-    display: none;
+    display: none; /* Controlled by script.js */
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.85);
@@ -73,9 +103,19 @@ canvas {
     justify-content: center;
     align-items: center;
     border-radius: 18px;
+    backdrop-filter: blur(4px);
 }
 
-.ui-layer { margin-top: 15px; display: flex; gap: 10px; justify-content: center; }
+#statusTitle { color: var(--accent); margin: 0; font-size: 2.5rem; }
+#highScoreText { margin: 10px 0 20px 0; opacity: 0.8; }
+
+/* --- Buttons --- */
+.ui-layer { 
+    margin-top: 15px; 
+    display: flex; 
+    gap: 10px; 
+    justify-content: center; 
+}
 
 .btn {
     padding: 12px 20px;
@@ -83,17 +123,31 @@ canvas {
     border: none;
     font-weight: bold;
     cursor: pointer;
-    transition: transform 0.1s;
+    text-transform: uppercase;
+    transition: transform 0.1s, background 0.2s;
 }
-.btn:active { transform: scale(0.9); }
 
-.quack-btn { background: var(--accent); color: #000; }
-.pause-btn { background: #ecf0f1; color: #333; }
+.btn:active { transform: scale(0.95); }
 
+.quack-btn { background: var(--accent); color: #000; box-shadow: 0 4px 0 #c29d0b; }
+.quack-btn:hover { background: #f39c12; }
+
+.pause-btn { background: #ecf0f1; color: #333; box-shadow: 0 4px 0 #bdc3c7; }
+
+.start-btn { 
+    background: var(--nest-green); 
+    color: white; 
+    font-size: 1.2rem; 
+    padding: 15px 40px;
+    box-shadow: 0 5px 0 #27ae60;
+}
+
+/* --- Footer & Links --- */
 .controls-hint {
-    margin-top: 10px;
-    font-size: 0.75rem;
-    opacity: 0.8;
+    margin-top: 12px;
+    font-size: 0.7rem;
+    opacity: 0.6;
+    font-style: italic;
 }
 
 .back-link {
@@ -102,4 +156,7 @@ canvas {
     margin-top: 20px;
     display: block;
     font-weight: bold;
+    transition: opacity 0.2s;
 }
+
+.back-link:hover { opacity: 0.7; }
