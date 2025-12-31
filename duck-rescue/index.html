@@ -1,39 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mama Duck Rescue</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="main-wrapper">
-        <div class="game-container">
-            <h1 class="game-title">DUCK RESCUE</h1>
-            
-            <div id="statusOverlay" class="overlay">
-                <h1 id="statusTitle">PAUSED</h1>
-                <p id="highScoreText">Best Rescue: 0</p>
-                <button class="btn start-btn" onclick="togglePause()">RESUME</button>
-            </div>
+<div class="main-wrapper">
+    <div class="game-container">
+        <h1 class="game-title">DUCK RESCUE</h1>
 
-            <div class="header">
-                <div class="stat-box">Saved: <span id="scoreDisplay">0</span></div>
-                <div class="stat-box">Best: <span id="highScoreDisplay">0</span></div>
-            </div>
-            
-            <canvas id="gameCanvas"></canvas>
+        <div class="boost-container">
+            <div id="boostBar"></div>
+        </div>
 
-            <div class="ui-layer">
-                <button class="btn quack-btn" onclick="quack()">🔊 QUACK</button>
-                <button class="btn pause-btn" onclick="togglePause()">⏸ PAUSE</button>
-            </div>
+        <div id="statusOverlay" class="overlay">
+            <h1 id="statusTitle">PAUSED</h1>
+            <p id="highScoreText">Best Rescue: 0</p>
+            <button class="btn start-btn" onclick="togglePause()">RESUME</button>
+        </div>
+
+        <div class="header">
+            <div class="stat-box">Saved: <span id="scoreDisplay">0</span></div>
+            <div class="stat-box">Best: <span id="highScoreDisplay">0</span></div>
+            <div class="stat-box">Trail: <span id="trailDisplay">0</span></div>
         </div>
         
-        <div class="external-footer">
-            <a href="../index.html" class="back-link">← Back to Gaming Hub</a>
+        <canvas id="gameCanvas"></canvas>
+
+        <div class="ui-layer">
+            <button class="btn quack-btn" onclick="quack()">🔊 QUACK</button>
+            <button class="btn pause-btn" onclick="togglePause()">⏸ PAUSE</button>
+        </div>
+
+        <div class="controls-hint">
+            PC: Arrows/WASD & Space | Phone: Swipe & Tap Swan
         </div>
     </div>
-    <script src="script.js"></script>
-</body>
-</html>
+    
+    <div class="external-footer">
+        <a href="../index.html" class="back-link">← Back to Gaming Hub</a>
+    </div>
+</div>
