@@ -2,19 +2,20 @@
     --pond: #2980b9;
     --water: #3498db;
     --accent: #f1c40f;
+    --danger: #e74c3c;
 }
 
 body {
     margin: 0;
     background-color: #050d08;
     color: white;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     overflow: hidden;
-    touch-action: none;
+    touch-action: none; /* Critical for mobile swipes */
 }
 
 .main-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; }
@@ -28,11 +29,28 @@ body {
     position: relative;
     width: 90%;
     max-width: 420px;
+    box-shadow: 0 10px 50px rgba(0,0,0,0.5);
 }
 
-.game-title { color: var(--accent); margin: 5px 0; text-shadow: 2px 2px #000; }
+.game-title { color: var(--accent); margin: 5px 0; text-shadow: 2px 2px #000; font-size: 1.8rem; }
 
 .header { display: flex; justify-content: space-around; margin-bottom: 10px; font-weight: bold; }
+
+/* Boost Bar Styling */
+.boost-container {
+    width: 100%;
+    height: 10px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 5px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+#boostBar {
+    width: 100%;
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.1s linear;
+}
 
 canvas {
     background: var(--water);
@@ -45,7 +63,6 @@ canvas {
     box-shadow: inset 0 0 50px rgba(0,0,0,0.3);
 }
 
-/* Overlays */
 .overlay {
     display: none;
     position: absolute;
@@ -66,10 +83,18 @@ canvas {
     border: none;
     font-weight: bold;
     cursor: pointer;
+    transition: transform 0.1s;
 }
+.btn:active { transform: scale(0.9); }
 
 .quack-btn { background: var(--accent); color: #000; }
 .pause-btn { background: #ecf0f1; color: #333; }
+
+.controls-hint {
+    margin-top: 10px;
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
 
 .back-link {
     color: var(--accent);
