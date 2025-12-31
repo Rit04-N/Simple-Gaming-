@@ -2,46 +2,117 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Gaming Hub</title>
     <style>
-        body { background: #1a050a; color: white; text-align: center; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 50px; }
-        h1 { color: #ff4d6d; text-shadow: 0 0 20px rgba(255, 77, 109, 0.5); font-size: 3rem; }
-        .grid { display: flex; justify-content: center; gap: 30px; margin-top: 50px; flex-wrap: wrap; }
+        /* --- 1. ENHANCED PAGE LAYOUT --- */
+        body { 
+            background: #1a050a; 
+            color: white; 
+            text-align: center; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 80px 20px; /* Increased top padding for a grander feel */
+        }
+
+        h1 { 
+            color: #ff4d6d; 
+            text-shadow: 0 0 25px rgba(255, 77, 109, 0.6); 
+            font-size: 4rem; /* Bigger Title */
+            margin-bottom: 50px;
+            letter-spacing: 2px;
+        }
+
+        /* --- 2. THE BIGGER GRID --- */
+        .grid { 
+            display: flex; 
+            justify-content: center; 
+            gap: 50px; /* Wider gap between games */
+            margin-top: 20px; 
+            flex-wrap: wrap; 
+        }
         
+        /* --- 3. THE BIGGER CARDS --- */
         .card { 
-            border: 2px solid #ff4d6d; padding: 40px; border-radius: 20px; 
-            text-decoration: none; color: white; transition: 0.3s; width: 250px;
+            border: 3px solid #ff4d6d; /* Thicker borders */
+            padding: 60px 30px; /* Much larger internal space */
+            border-radius: 25px; 
+            text-decoration: none; 
+            color: white; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            width: 320px; /* Wider cards */
             background: rgba(255, 77, 109, 0.05);
             display: flex;
             flex-direction: column;
             align-items: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .card span { 
+            font-size: 5rem !important; /* Huge Emojis */
+            margin-bottom: 20px;
         }
 
         /* Snake Card specific styling (Green theme) */
-        .snake-card { border-color: #2ecc71; background: rgba(46, 204, 113, 0.05); }
-        .snake-card:hover { background: #2ecc71; color: black; border-color: #2ecc71; }
+        .snake-card { 
+            border-color: #2ecc71; 
+            background: rgba(46, 204, 113, 0.05); 
+        }
+        
+        .snake-card:hover { 
+            background: #2ecc71; 
+            color: black; 
+            border-color: #2ecc71; 
+            box-shadow: 0 0 40px rgba(46, 204, 113, 0.4);
+        }
 
-        .card:hover { background: #ff4d6d; transform: translateY(-10px); color: black; }
-        .card h2 { margin: 10px 0; }
-        .card p { font-size: 0.9rem; opacity: 0.8; }
+        /* Bunny Card Hover */
+        .card:hover { 
+            background: #ff4d6d; 
+            transform: translateY(-15px) scale(1.05); /* Lifts up and grows */
+            color: black; 
+            box-shadow: 0 0 40px rgba(255, 77, 109, 0.4);
+        }
+
+        .card h2 { 
+            margin: 15px 0; 
+            font-size: 2rem; /* Bigger Game Names */
+        }
+
+        .card p { 
+            font-size: 1.1rem; /* Clearer descriptions */
+            opacity: 0.9; 
+            line-height: 1.4;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            h1 { font-size: 2.5rem; }
+            .card { width: 90%; padding: 40px 20px; }
+        }
     </style>
 </head>
 <body>
-    <h1>MY SCRATCH GAMING HUB</h1>
+    <h1>MY GAMING PORTAL</h1>
+    
     <div class="grid">
         
         <a href="bunny-run/index.html" class="card">
-            <span style="font-size: 3rem;">🐰</span>
+            <span>🐰</span>
             <h2>Bunny Run</h2>
-            <p>Collect hearts and avoid the cacti!</p>
+            <p>Collect carrots and avoid the cacti!</p>
         </a>
 
-        <a href="snake-game/index.html" class="card snake-card">
-            <span style="font-size: 3rem;">🐍</span>
+        <a href="snake-game/index.html" class="snake-card card">
+            <span>🐍</span>
             <h2>Retro Snake</h2>
             <p>Eat the apples and grow as long as you can!</p>
         </a>
 
     </div>
+
+    <p style="margin-top: 60px; opacity: 0.5; font-size: 0.9rem;">
+        Select a game to begin your adventure.
+    </p>
 </body>
 </html>
