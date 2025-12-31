@@ -2,6 +2,7 @@
     --green: #2ecc71;
     --dark-bg: #0a1a0f;
     --text: #e0ffe0;
+    --btn-bg: #14361f;
 }
 
 body {
@@ -20,7 +21,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
     width: 100%;
 }
 
@@ -33,13 +34,13 @@ body {
     text-align: center;
     position: relative;
     width: 90%;
-    max-width: 620px;
+    max-width: 500px; /* Constrain width for mobile look */
 }
 
 .game-title { 
     color: var(--green); 
     margin: 5px 0; 
-    font-size: 2rem;
+    font-size: 1.8rem;
     text-shadow: 0 0 15px var(--green); 
 }
 
@@ -51,7 +52,6 @@ canvas {
     margin: auto;
     width: 100% !important;
     height: auto !important;
-    max-width: 580px;
     aspect-ratio: 1 / 1;
     touch-action: none; 
 }
@@ -70,61 +70,77 @@ canvas {
 
 .overlay h1 { color: var(--green); font-size: 2.5rem; margin: 0; }
 
-.ui-layer { margin-top: 15px; display: flex; gap: 10px; justify-content: center; }
+.ui-layer { 
+    margin-top: 15px; 
+    display: flex; 
+    gap: 15px; 
+    justify-content: center; 
+}
 
 .btn {
-    padding: 12px 25px;
-    border-radius: 50px;
-    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 2px solid var(--green);
     font-weight: bold;
     cursor: pointer;
-    background: var(--green);
-    color: black;
+    background: var(--btn-bg);
+    color: var(--green);
     font-size: 1rem;
-    /* Flexbox to center content */
+    text-transform: uppercase;
+    transition: all 0.2s;
+    min-width: 100px;
+}
+
+.btn:active { background: var(--green); color: black; }
+.pause-btn { border-color: #ff9f43; color: #ff9f43; }
+.pause-btn:active { background: #ff9f43; color: black; }
+
+/* --- JOYSTICK / D-PAD STYLES --- */
+.d-pad {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    /* Make sure D-pad is easy to hit on mobile */
+}
+
+.d-row {
+    display: flex;
+    gap: 5px;
+}
+
+.d-btn {
+    width: 60px;
+    height: 60px;
+    background: #222;
+    border: 2px solid #444;
+    border-radius: 10px;
+    color: #888;
+    font-size: 1.5rem;
+    cursor: pointer;
+    touch-action: manipulation; /* Improves touch response */
     display: flex;
     justify-content: center;
     align-items: center;
-    min-width: 100px;
-    height: 44px;
+    -webkit-tap-highlight-color: transparent;
 }
 
-/* --- NEW CSS ICON FOR PAUSE BUTTON --- */
-.pause-btn { 
-    background: #1e5131; 
-    color: white;
-    width: 60px; /* Fixed width for circle/oval look */
-    padding: 0;
+.d-btn:active {
+    background: var(--green);
+    border-color: var(--green);
+    color: black;
+    transform: scale(0.95);
 }
 
-.pause-btn::before {
-    content: '';
-    display: block;
-    width: 4px; 
-    height: 16px;
-    /* Draws two vertical lines using borders */
-    border-left: 4px solid white;
-    border-right: 4px solid white;
-    box-sizing: content-box;
-    padding: 0 3px; /* Space between lines */
+.center-nub {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    background: #111;
+    border-color: #333;
 }
 
-/* Animation for visual feedback when shaking */
-@keyframes pulseRed {
-    0% { background-color: #1e5131; }
-    50% { background-color: #ff4d6d; }
-    100% { background-color: #1e5131; }
-}
-.shake-active {
-    animation: pulseRed 0.3s ease;
-}
-
-.instructions { margin-top: 10px; font-size: 0.9rem; color: var(--green); }
-.external-footer { margin-top: 5px; }
-.back-link {
-    color: var(--green);
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1.1rem;
-    text-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
-}
+.instructions { margin-top: 10px; font-size: 0.8rem; color: #666; }
+.back-link { color: var(--green); text-decoration: none; font-weight: bold; }
