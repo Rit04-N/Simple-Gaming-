@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Retro Snake | Play Online</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,7 +15,7 @@
                 <h1>GAME OVER</h1>
                 <p id="finalScoreText">Score: 0</p>
                 <p id="highScoreText">High Score: 0</p>
-                <button class="btn start-btn" onclick="startGame()">Play Again 🐍</button>
+                <button class="btn start-btn" onclick="startGame()">Play Again</button>
             </div>
 
             <div class="header">
@@ -26,13 +25,26 @@
             <canvas id="gameCanvas" width="600" height="600"></canvas>
 
             <div class="ui-layer">
-                <button class="btn start-btn" onclick="startGame()">▶ Start</button>
-                <button id="mobileShakeBtn" class="btn pause-btn" onclick="togglePause()"></button>
+                <button class="btn start-btn" onclick="startGame()">Start Game</button>
+                <button id="pauseBtn" class="btn pause-btn" onclick="togglePause()">PAUSE</button>
+            </div>
+            
+            <div class="d-pad">
+                <div class="d-row">
+                    <button class="d-btn" onmousedown="setDir('UP')" ontouchstart="setDir('UP')">▲</button>
+                </div>
+                <div class="d-row">
+                    <button class="d-btn" onmousedown="setDir('LEFT')" ontouchstart="setDir('LEFT')">◀</button>
+                    <button class="d-btn center-nub" onclick="togglePause()">●</button>
+                    <button class="d-btn" onmousedown="setDir('RIGHT')" ontouchstart="setDir('RIGHT')">▶</button>
+                </div>
+                <div class="d-row">
+                    <button class="d-btn" onmousedown="setDir('DOWN')" ontouchstart="setDir('DOWN')">▼</button>
+                </div>
             </div>
 
             <div class="instructions">
-                <p>Use <strong>Arrows</strong> or <strong>Swipe</strong> to turn</p>
-                <p style="font-size: 0.8rem; opacity: 0.7;">Space (or Shake Phone) to Pause</p>
+                <p>Use <strong>Buttons</strong> or <strong>Keyboard</strong> to play</p>
             </div>
         </div>
 
