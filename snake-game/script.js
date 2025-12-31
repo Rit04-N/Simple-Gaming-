@@ -10,8 +10,9 @@ let gameInterval;
 let score = 0;
 let highScore = localStorage.getItem("snakeHighScore") || 0;
 let isPaused = false;
+let isGameRunning = false;
 
-// --- AUDIO ENGINE ---
+// --- AUDIO ENGINE (Simple beeps) ---
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 let audioCtx;
 function initAudio() { 
@@ -19,204 +20,164 @@ function initAudio() {
     if (audioCtx.state === 'suspended') audioCtx.resume();
 }
 
-function playNote(freq, startTime, duration, wave = 'sine') {
+function playTone(freq, type) {
     if (!audioCtx) return;
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
-    osc.type = wave;
-    osc.frequency.setValueAtTime(freq, startTime);
-    gain.gain.setValueAtTime(0.1, startTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.start(startTime); osc.stop(startTime + duration);
-}
-
-function playMelody(type) {
-    if (!audioCtx) return;
-    const now = audioCtx.currentTime;
-    if (type === 'start') {
-        playNote(261, now, 0.1); playNote(329, now+0.1, 0.1); playNote(523, now+0.2, 0.3);
-    } else if (type === 'crunch') {
-        playNote(400, now, 0.1, 'triangle');
-    } else if (type === 'pause') {
-        playNote(440, now, 0.05); playNote(330, now+0.05, 0.1);
-    } else if (type === 'gameover') {
-        playNote(392, now, 0.2); playNote(311, now+0.2, 0.2); playNote(261, now+0.4, 0.5, 'sawtooth');
-    }
+    osc.frequency.value = freq;
+    osc.type = type;
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.1);
+    osc.stop(audioCtx.currentTime + 0.1);
 }
 
 // --- GAME LOGIC ---
 function startGame() {
     initAudio();
-    playMelody('start');
+    isGameRunning = true;
     isPaused = false;
     document.getElementById("gameOverOverlay").style.display = "none";
+    document.getElementById("pauseBtn").innerText = "PAUSE"; // Reset text
     score = 0;
     document.getElementById("scoreDisplay").innerText = "Apples: 0";
+    
     direction = "RIGHT";
     nextDirection = "RIGHT";
-    snake = [{ x: 15*box, y: 15*box }, { x: 14*box, y: 15*box }, { x: 13*box, y: 15*box }]; 
+    snake = [{ x: 5*box, y: 5*box }, { x: 4*box, y: 5*box }, { x: 3*box, y: 5*box }]; 
     spawnFood();
+    
     if (gameInterval) clearInterval(gameInterval);
     gameInterval = setInterval(draw, 150); 
 }
 
 function togglePause() {
-    // Prevent pausing if game hasn't started or is over
-    if (snake.length === 0 || document.getElementById("gameOverOverlay").style.display === "flex") return;
+    if (!isGameRunning) return;
     
     isPaused = !isPaused;
-    playMelody('pause');
+    const btn = document.getElementById("pauseBtn");
     
-    // Visual feedback for shake
-    const btn = document.getElementById("mobileShakeBtn");
-    btn.classList.add("shake-active");
-    setTimeout(() => btn.classList.remove("shake-active"), 300);
-
     if (isPaused) {
-        // Draw Pause Screen Overlay on Canvas
+        btn.innerText = "RESUME";
+        // Draw Pause Screen
         ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "white";
-        ctx.font = "40px Arial";
+        ctx.font = "30px Arial";
         ctx.textAlign = "center";
         ctx.fillText("PAUSED", canvas.width / 2, canvas.height / 2);
+    } else {
+        btn.innerText = "PAUSE";
     }
+}
+
+// --- JOYSTICK CONTROLLER ---
+function setDir(newDir) {
+    // Prevent default scrolling on mobile if needed
+    if(isPaused || !isGameRunning) return;
+
+    // Logic to prevent 180 degree turns
+    if (newDir === "LEFT" && direction !== "RIGHT") nextDirection = "LEFT";
+    else if (newDir === "UP" && direction !== "DOWN") nextDirection = "UP";
+    else if (newDir === "RIGHT" && direction !== "LEFT") nextDirection = "RIGHT";
+    else if (newDir === "DOWN" && direction !== "UP") nextDirection = "DOWN";
 }
 
 function spawnFood() {
     food = { x: Math.floor(Math.random()*29)*box, y: Math.floor(Math.random()*29)*box };
 }
 
-// --- INPUT LISTENERS ---
+// --- KEYBOARD LISTENERS ---
 document.addEventListener("keydown", (e) => {
     if (e.code === "Space") { e.preventDefault(); togglePause(); }
-    if (isPaused) return;
-    if (e.keyCode == 37 && direction != "RIGHT") nextDirection = "LEFT";
-    else if (e.keyCode == 38 && direction != "DOWN") nextDirection = "UP";
-    else if (e.keyCode == 39 && direction != "LEFT") nextDirection = "RIGHT";
-    else if (e.keyCode == 40 && direction != "UP") nextDirection = "DOWN";
-});
-
-let touchStartX = 0, touchStartY = 0;
-canvas.addEventListener("touchstart", (e) => {
-    touchStartX = e.changedTouches[0].screenX;
-    touchStartY = e.changedTouches[0].screenY;
-}, {passive: false});
-
-canvas.addEventListener("touchend", (e) => {
-    let diffX = e.changedTouches[0].screenX - touchStartX;
-    let diffY = e.changedTouches[0].screenY - touchStartY;
     
-    // Only move if swipe is significant (avoids accidental taps)
-    if (Math.abs(diffX) < 10 && Math.abs(diffY) < 10) return;
-
-    if (Math.abs(diffX) > Math.abs(diffY)) {
-        if (diffX > 30 && direction != "LEFT") nextDirection = "RIGHT";
-        else if (diffX < -30 && direction != "RIGHT") nextDirection = "LEFT";
-    } else {
-        if (diffY > 30 && direction != "UP") nextDirection = "DOWN";
-        else if (diffY < -30 && direction != "DOWN") nextDirection = "UP";
-    }
-}, {passive: false});
+    // Allow keyboard to work alongside joystick
+    if (e.keyCode == 37) setDir("LEFT");
+    else if (e.keyCode == 38) setDir("UP");
+    else if (e.keyCode == 39) setDir("RIGHT");
+    else if (e.keyCode == 40) setDir("DOWN");
+});
 
 // --- RENDER ---
 function drawSnakePart(part, index) {
     const isHead = index === 0;
     ctx.fillStyle = isHead ? "#2ecc71" : "#27ae60";
     ctx.beginPath();
-    ctx.roundRect(part.x+1, part.y+1, box-2, box-2, isHead?10:6);
+    ctx.roundRect(part.x+1, part.y+1, box-2, box-2, isHead?8:4);
     ctx.fill();
-
-    if (isHead) {
-        ctx.fillStyle = "white";
-        if (direction === "UP" || direction === "DOWN") {
-            ctx.beginPath(); ctx.arc(part.x+7, part.y+10, 3, 0, 7); ctx.fill();
-            ctx.beginPath(); ctx.arc(part.x+13, part.y+10, 3, 0, 7); ctx.fill();
-        } else {
-            ctx.beginPath(); ctx.arc(part.x+10, part.y+7, 3, 0, 7); ctx.fill();
-            ctx.beginPath(); ctx.arc(part.x+10, part.y+13, 3, 0, 7); ctx.fill();
-        }
+    
+    if(isHead) { // Simple eyes
+         ctx.fillStyle = "black";
+         ctx.fillRect(part.x+5, part.y+5, 4, 4);
+         ctx.fillRect(part.x+11, part.y+5, 4, 4);
     }
 }
 
 function draw() {
     if (isPaused) return;
+    
     direction = nextDirection;
+    
+    // Clear Screen
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw Snake
     snake.forEach((part, index) => drawSnakePart(part, index));
     
+    // Draw Food
     ctx.fillStyle = "#ff4d6d";
-    ctx.beginPath(); ctx.arc(food.x+box/2, food.y+box/2, box/2-2, 0, 7); ctx.fill();
+    ctx.beginPath(); 
+    ctx.arc(food.x+box/2, food.y+box/2, box/2-2, 0, 2*Math.PI); 
+    ctx.fill();
 
-    let sX = snake[0].x, sY = snake[0].y;
-    if (direction == "LEFT") sX -= box; if (direction == "UP") sY -= box;
-    if (direction == "RIGHT") sX += box; if (direction == "DOWN") sY += box;
+    // Move Head
+    let sX = snake[0].x;
+    let sY = snake[0].y;
 
+    if (direction == "LEFT") sX -= box;
+    if (direction == "UP") sY -= box;
+    if (direction == "RIGHT") sX += box;
+    if (direction == "DOWN") sY += box;
+
+    // Check Collision (Food)
     if (sX == food.x && sY == food.y) {
-        score++; playMelody('crunch');
+        score++;
+        playTone(600, 'triangle'); // Crunch sound
         document.getElementById("scoreDisplay").innerText = "Apples: " + score;
         spawnFood();
-    } else { snake.pop(); }
-
-    let nH = { x: sX, y: sY };
-    if (sX < 0 || sX >= canvas.width || sY < 0 || sY >= canvas.height || collision(nH, snake)) {
-        clearInterval(gameInterval); playMelody('gameover');
-        showGameOver(); return;
+    } else {
+        snake.pop(); // Remove tail
     }
-    snake.unshift(nH);
+
+    // Check Collision (Walls/Self)
+    let newHead = { x: sX, y: sY };
+    
+    if (sX < 0 || sX >= canvas.width || sY < 0 || sY >= canvas.height || collision(newHead, snake)) {
+        clearInterval(gameInterval);
+        playTone(150, 'sawtooth'); // Game over sound
+        isGameRunning = false;
+        showGameOver();
+        return;
+    }
+    
+    snake.unshift(newHead);
 }
 
-function collision(h, a) {
-    for (let i=0; i<a.length; i++) if (h.x == a[i].x && h.y == a[i].y) return true;
+function collision(head, array) {
+    for (let i = 0; i < array.length; i++) {
+        if (head.x == array[i].x && head.y == array[i].y) return true;
+    }
     return false;
 }
 
 function showGameOver() {
-    if (score > highScore) { highScore = score; localStorage.setItem("snakeHighScore", highScore); }
+    if (score > highScore) { 
+        highScore = score; 
+        localStorage.setItem("snakeHighScore", highScore); 
+    }
     document.getElementById("finalScoreText").innerText = "Apples: " + score;
     document.getElementById("highScoreText").innerText = "High Score: " + highScore;
     document.getElementById("gameOverOverlay").style.display = "flex";
 }
-
-// --- SHAKE TO PAUSE (MOBILE ONLY) ---
-document.addEventListener("DOMContentLoaded", () => {
-    // 1. Check if Mobile
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    if (isMobile && window.DeviceMotionEvent) {
-        let lastX = 0, lastY = 0, lastZ = 0;
-        let lastTime = 0;
-        const shakeThreshold = 20; // HIGHER = Less Sensitive (Harder shake required)
-        const debounceTime = 1000; // 1 Second cooldown
-        let lastFireTime = 0;
-
-        window.addEventListener('devicemotion', (event) => {
-            let currentTime = new Date().getTime();
-
-            if ((currentTime - lastTime) > 100) {
-                let diffTime = currentTime - lastTime;
-                lastTime = currentTime;
-
-                let x = event.accelerationIncludingGravity.x;
-                let y = event.accelerationIncludingGravity.y;
-                let z = event.accelerationIncludingGravity.z;
-
-                let speed = Math.abs(x + y + z - lastX - lastY - lastZ) / diffTime * 10000;
-
-                if (speed > shakeThreshold) {
-                    // Check Cooldown
-                    if ((currentTime - lastFireTime) > debounceTime) {
-                        togglePause(); // Call the main game pause function
-                        lastFireTime = currentTime;
-                    }
-                }
-
-                lastX = x;
-                lastY = y;
-                lastZ = z;
-            }
-        });
-    }
-});
