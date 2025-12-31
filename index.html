@@ -39,8 +39,8 @@
             opacity: 0.8;
         }
 
-        .giraffe-left { left: 5%; animation: pulse-dance 2s infinite alternate ease-in-out; }
-        .bee-right { right: 5%; animation: pulse-dance-flipped 2s infinite alternate ease-in-out; }
+        .giraffe-left { left: 2%; animation: pulse-dance 2s infinite alternate ease-in-out; }
+        .bee-right { right: 2%; animation: pulse-dance-flipped 2s infinite alternate ease-in-out; }
 
         @keyframes pulse-dance {
             0% { transform: scale(1) translateY(0); }
@@ -56,7 +56,7 @@
         .grid { 
             display: flex; 
             justify-content: center; 
-            gap: 50px; 
+            gap: 30px; 
             margin-top: 20px; 
             flex-wrap: wrap; 
             position: relative;
@@ -67,17 +67,17 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px; /* Space between card and the GIF below it */
+            gap: 15px;
         }
 
         .card { 
             border: 3px solid #ff4d6d; 
-            padding: 60px 30px; 
+            padding: 50px 25px; 
             border-radius: 25px; 
             text-decoration: none; 
             color: white; 
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            width: 320px; 
+            width: 280px; 
             background: rgba(46, 10, 22, 0.8);
             display: flex;
             flex-direction: column;
@@ -86,36 +86,40 @@
             backdrop-filter: blur(5px);
         }
 
-        .card span { font-size: 5rem !important; margin-bottom: 20px; }
-        .snake-card { border-color: #2ecc71; background: rgba(10, 46, 25, 0.8); }
-        .snake-card:hover { background: #2ecc71; color: black; box-shadow: 0 0 40px rgba(46, 204, 113, 0.4); }
-        .card:hover { background: #ff4d6d; transform: translateY(-15px) scale(1.05); color: black; box-shadow: 0 0 40px rgba(255, 77, 109, 0.4); }
+        .card span { font-size: 4rem !important; margin-bottom: 20px; }
         
-        .card h2 { margin: 15px 0; font-size: 2rem; }
-        .card p { font-size: 1.1rem; opacity: 0.9; line-height: 1.4; }
+        /* Game Specific Colors */
+        .bunny-card { border-color: #ff4d6d; }
+        .snake-card { border-color: #2ecc71; background: rgba(10, 46, 25, 0.8); }
+        .duck-card { border-color: #3498db; background: rgba(10, 31, 46, 0.8); }
 
-        /* Mobile GIF Styling (Underneath cards) */
+        .card:hover { 
+            transform: translateY(-15px) scale(1.05); 
+            color: black; 
+        }
+
+        .bunny-card:hover { background: #ff4d6d; box-shadow: 0 0 40px rgba(255, 77, 109, 0.4); }
+        .snake-card:hover { background: #2ecc71; box-shadow: 0 0 40px rgba(46, 204, 113, 0.4); }
+        .duck-card:hover { background: #3498db; box-shadow: 0 0 40px rgba(52, 152, 219, 0.4); }
+        
+        .card h2 { margin: 10px 0; font-size: 1.8rem; }
+        .card p { font-size: 1rem; opacity: 0.9; line-height: 1.4; }
+
+        /* Mobile GIF Styling */
         .under-card-gif {
-            display: none; /* Hidden on PC */
-            width: 120px;
+            display: none;
+            width: 100px;
             height: auto;
             border-radius: 15px;
-            filter: drop-shadow(0 0 10px rgba(255, 77, 109, 0.3));
         }
 
         /* --- 4. RESPONSIVE LOGIC --- */
         @media (max-width: 600px) {
             h1 { font-size: 2.5rem; }
             .grid { gap: 40px; }
-            .card { width: 90vw; padding: 40px 20px; }
-            
-            /* Hide fixed background dancers on mobile */
+            .card { width: 85vw; padding: 40px 20px; }
             .bg-dancer { display: none; }
-
-            /* Show GIFs directly underneath the cards on mobile */
-            .under-card-gif {
-                display: block;
-            }
+            .under-card-gif { display: block; }
         }
     </style>
 </head>
@@ -128,7 +132,7 @@
     
     <div class="grid">
         <div class="card-group">
-            <a href="bunny-run/index.html" class="card">
+            <a href="bunny-run/index.html" class="card bunny-card">
                 <span>🐰</span>
                 <h2>Carrots</h2>
                 <p>Collect carrots and avoid the cacti!</p>
@@ -137,12 +141,21 @@
         </div>
 
         <div class="card-group">
-            <a href="snake-game/index.html" class="snake-card card">
+            <a href="snake-game/index.html" class="card snake-card">
                 <span>🐍</span>
                 <h2>Retro Snake</h2>
                 <p>Eat the apples and grow as long as you can!</p>
             </a>
             <img src="dance.gif" class="under-card-gif" alt="Bee Under">
+        </div>
+
+        <div class="card-group">
+            <a href="duck-rescue/index.html" class="card duck-card">
+                <span>🦢</span>
+                <h2>Duck Rescue</h2>
+                <p>Lead the babies to the nest! Avoid the 🐟!</p>
+            </a>
+            <img src="dance.gif" class="under-card-gif" alt="Duck Under">
         </div>
     </div>
 
