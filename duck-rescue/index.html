@@ -21,7 +21,7 @@
             margin: 0; padding: 0;
             background-color: #050d08;
             color: var(--text-white);
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex; justify-content: center; min-height: 100vh; overflow-y: auto; 
         }
 
@@ -50,30 +50,44 @@
         /* --- D-PAD PLACEMENT LOGIC --- */
         .overlay-dpad {
             position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-            z-index: 45; opacity: 0.4; pointer-events: auto; scale: 0.8;
+            z-index: 45; opacity: 0.5; pointer-events: auto; scale: 0.85;
         }
 
         .mobile-controls { margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 20px; display: flex; justify-content: center; }
         .d-pad-grid { display: grid; grid-template-columns: repeat(3, 60px); grid-template-rows: repeat(3, 60px); gap: 8px; }
-        .d-btn { background: #34495e; border: 2px solid #2c3e50; border-radius: 10px; color: white; display: flex; justify-content: center; align-items: center; }
+        .d-btn { background: #34495e; border: 2px solid #2c3e50; border-radius: 10px; color: white; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; }
         .center-boost { background: #c0392b; border-radius: 50%; font-size: 1.5rem; }
 
         .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 15, 20, 0.98); z-index: 50; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 12px; padding: 20px; }
-        .btn { padding: 15px 30px; border-radius: 50px; border: none; font-weight: bold; cursor: pointer; color: white; margin-top: 10px; text-transform: uppercase; }
+        .btn { padding: 15px 30px; border-radius: 50px; border: none; font-weight: bold; cursor: pointer; color: white; margin-top: 10px; text-transform: uppercase; font-size: 1rem;}
         .start-btn { background: var(--nest-green); box-shadow: 0 4px 0 #219150; }
 
+        /* --- SETTINGS MODAL --- */
         .settings-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .settings-content { background: #2c3e50; padding: 25px; border-radius: 20px; border: 2px solid var(--accent); width: 90%; max-width: 350px; text-align: center; }
-        .setting-row { margin: 15px 0; display: flex; flex-direction: column; gap: 5px; align-items: center; }
+        .settings-content { background: #2c3e50; padding: 20px; border-radius: 20px; border: 2px solid var(--accent); width: 90%; max-width: 350px; text-align: center; }
+        .setting-row { margin: 15px 0; display: flex; flex-direction: column; gap: 8px; align-items: center; }
         .toggle-group { display: flex; gap: 5px; background: #1a252f; padding: 5px; border-radius: 25px; }
-        .toggle-btn { padding: 8px 12px; border: none; background: transparent; color: #7f8c8d; cursor: pointer; font-size: 0.8rem; font-weight: bold; border-radius: 20px; }
+        .toggle-btn { padding: 8px 15px; border: none; background: transparent; color: #7f8c8d; cursor: pointer; font-size: 0.9rem; font-weight: bold; border-radius: 20px; transition: 0.2s;}
         .toggle-btn.active { background: var(--accent); color: black; }
+        input[type=range] { width: 80%; }
 
         .info-panel { background: var(--ui-dark); padding: 20px; border-radius: 15px; border: 1px solid #444; width: 100%; max-width: 450px; display: block; }
+
+        /* JOYSTICK BOOST BTN */
+        .joystick-boost-btn {
+            position: absolute; bottom: 30px; right: 20px;
+            width: 70px; height: 70px; border-radius: 50%;
+            background: rgba(231, 76, 60, 0.8); border: 3px solid rgba(255,255,255,0.5);
+            color: white; font-weight: bold; font-size: 0.9rem;
+            display: none; justify-content: center; align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            z-index: 40; cursor: pointer;
+        }
 
         @media (min-width: 900px) {
             .main-wrapper { flex-direction: row; align-items: flex-start; }
             .info-panel { position: sticky; top: 20px; width: 300px; }
+            .mobile-controls { display: none !important; }
         }
     </style>
 </head>
@@ -89,7 +103,7 @@
 
                 <div id="statusOverlay" class="overlay">
                     <h1 id="statusTitle">READY?</h1>
-                    <p id="waveTitle" style="color: var(--accent); font-weight: bold;">Wave 1</p>
+                    <p id="waveTitle" style="color: var(--accent); font-weight: bold; font-size: 1.2rem;">Wave 1</p>
                     <p id="waveDesc" style="color:#bdc3c7; font-size: 0.9rem; margin-bottom:20px;"></p>
                     <button id="mainActionBtn" class="btn start-btn" onclick="prepareWave(1)">▶ START WAVE</button>
                 </div>
@@ -110,6 +124,7 @@
                 <div style="position: relative;">
                     <canvas id="gameCanvas"></canvas>
                     <div id="inlineDpad" class="d-pad-grid overlay-dpad" style="display: none;"></div>
+                    <button id="joyBoostBtn" class="joystick-boost-btn">🚀<br>BOOST</button>
                 </div>
 
                 <div class="ui-layer"><button class="btn" style="background:#95a5a6; width:100%;" onclick="togglePause()">PAUSE</button></div>
@@ -122,15 +137,16 @@
             <h3>MISSION BRIEFING</h3>
             <p id="pcGuide"><strong>PC Controls:</strong><br>• Use <b>Arrow Keys</b> or <b>WASD</b> to swim.<br>• Press <b>SPACE</b> for speed boost.</p>
             <hr style="border-color: #444;">
-            <p>🐊 <strong>Crocodile:</strong> Eats you and any ducklings he touches (even unrescued ones!).</p>
-            <p>🐟 <strong>Pike:</strong> Scares ducklings away. Harmless to Mama.</p>
+            <p>🐊 <strong>Crocodile:</strong><br> Eats YOU and any ducklings he touches!</p>
+            <p>🐟 <strong>Pike:</strong><br> Scares ducklings away (Harmless to Mama).</p>
             <a href="../index.html" style="color:var(--accent); text-decoration:none; font-weight:bold;">← Gaming Hub</a>
         </div>
     </div>
 
     <div id="settingsModal" class="settings-modal">
         <div class="settings-content">
-            <h2 style="color: var(--accent);">SETTINGS</h2>
+            <h2 style="color: var(--accent); margin-top:0;">⚙️ SETTINGS</h2>
+            
             <div class="setting-row">
                 <label>Control Type:</label>
                 <div class="toggle-group">
@@ -138,28 +154,45 @@
                     <button class="toggle-btn" id="setDpad" onclick="setControl('dpad')">D-Pad</button>
                 </div>
             </div>
-            <div class="setting-row">
-                <label>D-Pad Style:</label>
+
+            <div class="setting-row" id="dpadPosRow">
+                <label>D-Pad Position:</label>
                 <div class="toggle-group">
-                    <button class="toggle-btn" id="setExt" onclick="setDpadPos('external')">External</button>
+                    <button class="toggle-btn" id="setExt" onclick="setDpadPos('external')">Bottom</button>
                     <button class="toggle-btn" id="setOvr" onclick="setDpadPos('overlay')">Overlay</button>
                 </div>
             </div>
-            <button class="btn" style="background:var(--accent); color:black; width:100%;" onclick="closeSettings()">SAVE</button>
+
+            <div class="setting-row" id="sensRow">
+                <label>Joystick Speed:</label>
+                <input type="range" id="sensSlider" min="10" max="60" value="30" oninput="updateSens(this.value)">
+                <span id="sensValue" style="color: var(--accent);">30</span>
+            </div>
+
+            <div class="setting-row">
+                <label>Sound Effects:</label>
+                <button class="toggle-btn active" id="btnSound" onclick="toggleSound()">ON</button>
+            </div>
+
+            <button class="btn" style="background:var(--accent); color:black; width:100%; margin-top:15px;" onclick="closeSettings()">SAVE & CLOSE</button>
         </div>
     </div>
 
     <script>
+        // --- GAME CONFIG ---
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         canvas.width = 400; canvas.height = 400;
 
         const WAVE_TEXT = { 1: "Learn to rescue. Predators are hungry!", 2: "The Pike is here. He scares ducklings away.", 3: "High Stakes! Crocodile eats everything." };
 
+        const getStore = (k,d) => localStorage.getItem(k) || d;
+
         let settings = { 
-            control: localStorage.getItem('dControl') || 'joystick', 
-            dPos: localStorage.getItem('dPos') || 'external',
-            sens: 30 
+            control: getStore('dControl','joystick'), 
+            dPos: getStore('dPos','external'),
+            sens: parseInt(getStore('dSens','30')),
+            sound: true
         };
 
         let gameState = { active: false, paused: true, level: 1, score: 0, lives: 5, casualties: 0, saved: 0, target: 3, boost: 100 };
@@ -167,8 +200,26 @@
         let ducklings = []; let history = []; let enemies = [];
         let lostDuckling = { x: 100, y: 100 }; let nest = { x: 340, y: 60, size: 40 };
         let keys = {}; let isBoosting = false;
+        
+        let joystick = { active: false, baseX:0, baseY:0, stickX:0, stickY:0, dx:0, dy:0 };
 
-        // DPAD TEMPLATE
+        // AUDIO ENGINE
+        let audioCtx;
+        const Sfx = {
+            play: (t) => {
+                if(!settings.sound || !audioCtx) return;
+                if(audioCtx.state==='suspended') audioCtx.resume();
+                try {
+                    const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                    o.connect(g); g.connect(audioCtx.destination);
+                    const now = audioCtx.currentTime;
+                    if(t==='coin'){ o.freq=600; o.frequency.exponentialRampToValueAtTime(900,now+0.1); g.gain.value=0.1; o.start(now); o.stop(now+0.1); }
+                    if(t==='hit'){ o.type='sawtooth'; o.freq=150; g.gain.value=0.2; o.start(now); o.stop(now+0.2); }
+                    if(t==='win'){ o.type='square'; o.freq=400; o.frequency.linearRampToValueAtTime(800,now+0.3); g.gain.value=0.1; o.start(now); o.stop(now+0.4); }
+                } catch(e){}
+            }
+        };
+
         const dpadHTML = `
             <button class="d-btn" data-dir="UL">◤</button><button class="d-btn" data-dir="U">▲</button><button class="d-btn" data-dir="UR">◥</button>
             <button class="d-btn" data-dir="L">◀</button><button class="d-btn center-boost" data-dir="B">🚀</button><button class="d-btn" data-dir="R">▶</button>
@@ -176,6 +227,7 @@
         `;
 
         function prepareWave(lvl) {
+            if(!audioCtx) { audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }
             if (lvl === 1) { gameState.score = 0; gameState.lives = 5; gameState.casualties = 0; }
             gameState.active = true; gameState.paused = false; gameState.level = lvl;
             gameState.saved = 0; gameState.target = 2 + lvl;
@@ -184,8 +236,9 @@
             let speed = 1 + (lvl * 0.15);
             if (lvl >= 2) enemies.push({ type: 'pike', x: -50, y: 150, s: 2 * speed });
             if (lvl >= 3) enemies.push({ type: 'croc', x: 500, y: 300, s: -1.2 * speed });
+            if (lvl >= 5) enemies.push({ type: 'croc', x: 500, y: 100, s: -1.5 * speed });
             
-            spawnBaby(); updateUI();
+            spawnBaby(); updateUI(); applyUI();
             document.getElementById("statusOverlay").style.display = "none";
             requestAnimationFrame(loop);
         }
@@ -195,14 +248,27 @@
         function update() {
             if (gameState.paused) return;
             let mx = 0, my = 0;
+            
+            // KEYBOARD
             if (keys.ArrowUp || keys.KeyW) my = -1; if (keys.ArrowDown || keys.KeyS) my = 1;
             if (keys.ArrowLeft || keys.KeyA) mx = -1; if (keys.ArrowRight || keys.KeyD) mx = 1;
+
+            // JOYSTICK
+            if (settings.control === 'joystick' && joystick.active) {
+                mx = joystick.dx; my = joystick.dy;
+            }
 
             let s = isBoosting && gameState.boost > 0 ? 7 : 3;
             if (isBoosting) gameState.boost -= 1.5; else if (gameState.boost < 100) gameState.boost += 0.5;
             document.getElementById("boostBar").style.width = gameState.boost + "%";
 
-            mama.x += mx * s; mama.y += my * s;
+            // NORMALIZE MOVEMENT
+            if(mx!==0 || my!==0) {
+                 // Joystick is already normalized roughly by logic below
+                 if(!joystick.active) { let l = Math.sqrt(mx*mx+my*my); if(l>0){mx/=l; my/=l;} }
+                 mama.x += mx * s; mama.y += my * s;
+            }
+
             mama.x = Math.max(20, Math.min(380, mama.x)); mama.y = Math.max(20, Math.min(380, mama.y));
             history.unshift({x: mama.x, y: mama.y}); if (history.length > 300) history.pop();
 
@@ -211,26 +277,26 @@
                 if (e.x > 450 || e.x < -100) e.x = e.s > 0 ? -50 : 500;
                 
                 // MAMA COLLISION
-                if (Math.hypot(mama.x - e.x, mama.y - e.y) < 30 && e.type === 'croc') loseLife();
+                if (Math.hypot(mama.x - e.x, mama.y - e.y) < 30 && e.type === 'croc') { Sfx.play('hit'); loseLife(); }
 
-                // PRE-RESCUE BABY COLLISION (The New Logic)
+                // PRE-RESCUE BABY COLLISION (Casualty Logic)
                 if (Math.hypot(lostDuckling.x - e.x, lostDuckling.y - e.y) < 25) {
-                    gameState.casualties++; spawnBaby(); updateUI();
+                    Sfx.play('hit'); gameState.casualties++; spawnBaby(); updateUI();
                 }
 
                 // LINE COLLISION
                 ducklings.forEach((d, i) => {
                     let idx = (i+1)*15;
                     if (history[idx] && Math.hypot(history[idx].x - e.x, history[idx].y - e.y) < 25) {
-                        if (e.type === 'croc') gameState.casualties += (ducklings.length - i);
+                        if (e.type === 'croc') { Sfx.play('hit'); gameState.casualties += (ducklings.length - i); }
                         ducklings.splice(i); updateUI();
                     }
                 });
             });
 
-            if (Math.hypot(mama.x - lostDuckling.x, mama.y - lostDuckling.y) < 30) { ducklings.push({}); spawnBaby(); }
+            if (Math.hypot(mama.x - lostDuckling.x, mama.y - lostDuckling.y) < 30) { Sfx.play('coin'); ducklings.push({}); spawnBaby(); }
             if (Math.hypot(mama.x - nest.x, mama.y - nest.y) < 35 && ducklings.length > 0) {
-                gameState.score += ducklings.length; gameState.saved += ducklings.length;
+                Sfx.play('win'); gameState.score += ducklings.length; gameState.saved += ducklings.length;
                 ducklings = []; updateUI();
                 if (gameState.saved >= gameState.target) nextWave();
             }
@@ -240,14 +306,27 @@
 
         function draw() {
             ctx.clearRect(0,0,400,400);
-            ctx.font = "40px serif"; ctx.fillText("🪺", nest.x-20, nest.y+15);
-            ctx.fillText("🐣", lostDuckling.x-15, lostDuckling.y+10);
-            enemies.forEach(e => ctx.fillText(e.type === 'croc' ? "🐊" : "🐟", e.x-15, e.y+10));
-            ctx.fillText("🦢", mama.x-20, mama.y+15);
+            ctx.textAlign = "center"; ctx.textBaseline="middle";
+            ctx.font = "40px serif"; ctx.fillText("🪺", nest.x, nest.y);
+            ctx.fillText("🐣", lostDuckling.x, lostDuckling.y);
+            enemies.forEach(e => ctx.fillText(e.type === 'croc' ? "🐊" : "🐟", e.x, e.y));
+            
+            ctx.save(); ctx.translate(mama.x, mama.y);
+            if(keys.ArrowLeft || keys.KeyA || (joystick.active && joystick.dx<0)) ctx.scale(-1,1);
+            ctx.fillText("🦢", 0, 0); ctx.restore();
+
             ducklings.forEach((d,i) => {
                 let p = history[(i+1)*15];
-                if(p) ctx.fillText("🐥", p.x-10, p.y+10);
+                if(p) { ctx.font="20px serif"; ctx.fillText("🐥", p.x, p.y); }
             });
+
+            // JOYSTICK DRAW
+            if(settings.control==='joystick' && joystick.active){
+                ctx.beginPath(); ctx.arc(joystick.baseX, joystick.baseY, 40, 0, 7);
+                ctx.fillStyle="rgba(255,255,255,0.2)"; ctx.fill();
+                ctx.beginPath(); ctx.arc(joystick.stickX, joystick.stickY, 15, 0, 7);
+                ctx.fillStyle="orange"; ctx.fill();
+            }
         }
 
         function updateUI() {
@@ -281,28 +360,54 @@
             document.getElementById("mainActionBtn").onclick = () => prepareWave(1);
         }
 
-        function togglePause() { gameState.paused = !gameState.paused; if(!gameState.paused) loop(); }
+        function togglePause() { 
+            if(!gameState.active) return;
+            gameState.paused = !gameState.paused; 
+            document.getElementById("statusOverlay").style.display = gameState.paused ? "flex" : "none";
+            if(gameState.paused) {
+                 document.getElementById("statusTitle").innerText = "PAUSED";
+                 document.getElementById("waveTitle").innerText="";
+                 document.getElementById("waveDesc").innerText="";
+                 document.getElementById("mainActionBtn").innerText="RESUME";
+                 document.getElementById("mainActionBtn").onclick = togglePause;
+            } else loop();
+        }
 
-        // SETTINGS LOGIC
-        function openSettings() { document.getElementById("settingsModal").style.display="flex"; }
+        // SETTINGS
+        function openSettings() { if(gameState.active && !gameState.paused) togglePause(); document.getElementById("settingsModal").style.display="flex"; applyUI(); }
         function closeSettings() { document.getElementById("settingsModal").style.display="none"; applyUI(); }
         function setControl(c) { settings.control = c; localStorage.setItem('dControl', c); applyUI(); }
         function setDpadPos(p) { settings.dPos = p; localStorage.setItem('dPos', p); applyUI(); }
+        function updateSens(v) { settings.sens = parseInt(v); document.getElementById("sensValue").innerText=v; localStorage.setItem('dSens', v); }
+        function toggleSound() { settings.sound = !settings.sound; applyUI(); }
 
         function applyUI() {
             const ext = document.getElementById("externalDpad");
             const inl = document.getElementById("inlineDpad");
-            ext.style.display = "none"; inl.style.display = "none";
-            
-            if (settings.control === 'dpad') {
-                if (settings.dPos === 'external') { ext.style.display = "flex"; ext.innerHTML = dpadHTML; }
-                else { inl.style.display = "grid"; inl.innerHTML = dpadHTML; }
-                attachDpadEvents();
-            }
+            const joyBtn = document.getElementById("joyBoostBtn");
+            const sensRow = document.getElementById("sensRow");
+            const dpadPosRow = document.getElementById("dpadPosRow");
+
+            ext.style.display = "none"; inl.style.display = "none"; joyBtn.style.display="none";
+
+            // Button States
             document.getElementById("setJoy").className = settings.control === 'joystick' ? 'toggle-btn active' : 'toggle-btn';
             document.getElementById("setDpad").className = settings.control === 'dpad' ? 'toggle-btn active' : 'toggle-btn';
             document.getElementById("setExt").className = settings.dPos === 'external' ? 'toggle-btn active' : 'toggle-btn';
             document.getElementById("setOvr").className = settings.dPos === 'overlay' ? 'toggle-btn active' : 'toggle-btn';
+            document.getElementById("btnSound").className = settings.sound ? 'toggle-btn active' : 'toggle-btn';
+            document.getElementById("btnSound").innerText = settings.sound ? "ON" : "OFF";
+            document.getElementById("sensSlider").value = settings.sens;
+
+            if (settings.control === 'dpad') {
+                sensRow.style.display = 'none'; dpadPosRow.style.display = 'flex';
+                if (settings.dPos === 'external') { ext.style.display = "flex"; ext.innerHTML = dpadHTML; }
+                else { inl.style.display = "grid"; inl.innerHTML = dpadHTML; }
+                attachDpadEvents();
+            } else {
+                sensRow.style.display = 'flex'; dpadPosRow.style.display = 'none';
+                if(gameState.active && !gameState.paused) joyBtn.style.display="flex";
+            }
         }
 
         function attachDpadEvents() {
@@ -318,6 +423,42 @@
 
         window.onkeydown = (e) => { keys[e.code]=true; if(e.code==='Space') isBoosting=true; };
         window.onkeyup = (e) => { keys[e.code]=false; if(e.code==='Space') isBoosting=false; };
+
+        // JOYSTICK
+        canvas.addEventListener("touchstart", (e) => {
+            if (settings.control !== 'joystick' || !gameState.active || gameState.paused) return;
+            e.preventDefault();
+            const r = canvas.getBoundingClientRect();
+            joystick.active = true;
+            joystick.baseX = (e.touches[0].clientX - r.left) * (canvas.width/r.width);
+            joystick.baseY = (e.touches[0].clientY - r.top) * (canvas.height/r.height);
+            joystick.stickX = joystick.baseX; joystick.stickY = joystick.baseY;
+            document.getElementById("joyBoostBtn").style.display="flex";
+        }, {passive:false});
+
+        canvas.addEventListener("touchmove", (e) => {
+            if (!joystick.active) return;
+            e.preventDefault();
+            const r = canvas.getBoundingClientRect();
+            const tx = (e.touches[0].clientX - r.left) * (canvas.width/r.width);
+            const ty = (e.touches[0].clientY - r.top) * (canvas.height/r.height);
+            
+            const dist = Math.hypot(tx - joystick.baseX, ty - joystick.baseY);
+            const angle = Math.atan2(ty - joystick.baseY, tx - joystick.baseX);
+            const lim = Math.min(dist, 40);
+            
+            joystick.stickX = joystick.baseX + Math.cos(angle)*lim;
+            joystick.stickY = joystick.baseY + Math.sin(angle)*lim;
+            
+            const f = Math.min(dist / (70 - settings.sens), 1);
+            joystick.dx = Math.cos(angle)*f; joystick.dy = Math.sin(angle)*f;
+        }, {passive:false});
+
+        canvas.addEventListener("touchend", () => { joystick.active=false; joystick.dx=0; joystick.dy=0; });
+        
+        const jBtn = document.getElementById("joyBoostBtn");
+        jBtn.addEventListener("touchstart", (e)=>{e.preventDefault(); isBoosting=true;});
+        jBtn.addEventListener("touchend", (e)=>{e.preventDefault(); isBoosting=false;});
 
         applyUI();
     </script>
