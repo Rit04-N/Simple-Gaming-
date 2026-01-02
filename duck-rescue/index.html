@@ -21,154 +21,59 @@
             margin: 0; padding: 0;
             background-color: #050d08;
             color: var(--text-white);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-            overflow-y: auto; 
+            font-family: 'Segoe UI', sans-serif;
+            display: flex; justify-content: center; min-height: 100vh; overflow-y: auto; 
         }
 
-        .main-wrapper {
-            width: 100%; max-width: 900px;
-            display: flex; flex-direction: column;
-            align-items: center; padding: 15px; gap: 20px;
-        }
-
+        .main-wrapper { width: 100%; max-width: 900px; display: flex; flex-direction: column; align-items: center; padding: 15px; gap: 20px; }
         .game-column { width: 100%; max-width: 450px; position: relative; }
 
         .game-container {
-            background: var(--pond-bg); padding: 12px;
-            border-radius: 15px; border: 3px solid white;
-            text-align: center; position: relative;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            overflow: hidden; 
+            background: var(--pond-bg); padding: 12px; border-radius: 15px; border: 3px solid white;
+            text-align: center; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.5); overflow: hidden; 
         }
 
-        .top-bar {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 10px; position: relative; z-index: 60;
-        }
-        .game-title { 
-            color: var(--accent); margin: 0; 
-            text-shadow: 2px 2px 0 #000; font-size: 1.5rem; 
-        }
-        .icon-btn {
-            background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.2); 
-            border-radius: 50%; width: 40px; height: 40px;
-            font-size: 1.5rem; cursor: pointer; color: white;
-            display: flex; justify-content: center; align-items: center;
-        }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; position: relative; z-index: 60; }
+        .game-title { color: var(--accent); margin: 0; text-shadow: 2px 2px 0 #000; font-size: 1.5rem; }
+        .icon-btn { background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 40px; height: 40px; font-size: 1.2rem; cursor: pointer; color: white; display: flex; justify-content: center; align-items: center; }
 
-        .hud-grid {
-            display: grid; grid-template-columns: 1fr 1.5fr 1fr;
-            gap: 5px; margin-bottom: 8px;
-        }
-        .hud-box {
-            background: rgba(0,0,0,0.3); padding: 5px;
-            border-radius: 8px; font-weight: bold; font-size: 0.9rem;
-        }
+        .hud-grid { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 5px; margin-bottom: 8px; }
+        .hud-box { background: rgba(0,0,0,0.3); padding: 5px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; }
         .target-box { border: 1px solid var(--accent); color: var(--accent); }
         .sub-header { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem;}
-        .death-box span { color: #ecf0f1; font-weight: bold; }
 
-        .boost-container {
-            width: 100%; height: 8px; background: rgba(0,0,0,0.5);
-            border-radius: 4px; margin-bottom: 8px; overflow: hidden;
-        }
+        .boost-container { width: 100%; height: 8px; background: rgba(0,0,0,0.5); border-radius: 4px; margin-bottom: 8px; overflow: hidden; }
         #boostBar { width: 100%; height: 100%; background: linear-gradient(to right, var(--accent), #e67e22); transition: width 0.1s; }
 
-        canvas {
-            background: var(--water-bg); display: block; margin: auto;
-            border-radius: 10px; width: 100%; aspect-ratio: 1 / 1;
-            cursor: crosshair;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+        canvas { background: var(--water-bg); display: block; margin: auto; border-radius: 10px; width: 100%; aspect-ratio: 1 / 1; }
+
+        /* --- D-PAD PLACEMENT LOGIC --- */
+        .overlay-dpad {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 45; opacity: 0.4; pointer-events: auto; scale: 0.8;
         }
 
-        /* --- OVERLAYS --- */
-        .overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 15, 20, 0.98); z-index: 50;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            border-radius: 12px;
-            padding: 20px;
-        }
-        .wave-desc { 
-            color: #bdc3c7; font-size: 1.1rem; margin: 10px 0 30px 0; 
-            max-width: 90%; line-height: 1.5;
-        }
-        #statusTitle { font-size: 2.5rem; color: var(--accent); margin: 0; text-transform: uppercase; }
+        .mobile-controls { margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 20px; display: flex; justify-content: center; }
+        .d-pad-grid { display: grid; grid-template-columns: repeat(3, 60px); grid-template-rows: repeat(3, 60px); gap: 8px; }
+        .d-btn { background: #34495e; border: 2px solid #2c3e50; border-radius: 10px; color: white; display: flex; justify-content: center; align-items: center; }
+        .center-boost { background: #c0392b; border-radius: 50%; font-size: 1.5rem; }
 
-        .ui-layer { margin-top: 10px; }
-        .btn {
-            padding: 15px 30px; border-radius: 50px; border: none;
-            font-weight: bold; cursor: pointer; color: white; margin-top: 10px;
-            text-transform: uppercase; font-size: 1.1rem;
-        }
-        .start-btn { background: var(--nest-green); box-shadow: 0 4px 0 #219150; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        
-        .pause-btn { background: #95a5a6; width: 100%; padding: 12px; color: #2c3e50; font-size: 1rem;}
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 15, 20, 0.98); z-index: 50; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 12px; padding: 20px; }
+        .btn { padding: 15px 30px; border-radius: 50px; border: none; font-weight: bold; cursor: pointer; color: white; margin-top: 10px; text-transform: uppercase; }
+        .start-btn { background: var(--nest-green); box-shadow: 0 4px 0 #219150; }
 
-        .joystick-boost-btn {
-            position: absolute; bottom: 30px; right: 20px;
-            width: 70px; height: 70px; border-radius: 50%;
-            background: rgba(231, 76, 60, 0.8); border: 3px solid rgba(255,255,255,0.5);
-            color: white; font-weight: bold; font-size: 0.9rem;
-            display: none; justify-content: center; align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-            z-index: 40; cursor: pointer;
-        }
-        .joystick-boost-btn:active { background: #c0392b; transform: scale(0.95); }
-
-        .mobile-controls {
-            margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.05);
-            border-radius: 20px; display: flex; justify-content: center;
-        }
-        .d-pad-grid {
-            display: grid; grid-template-columns: repeat(3, 60px); 
-            grid-template-rows: repeat(3, 60px); gap: 8px;
-        }
-        .d-btn {
-            background: #34495e; border: 2px solid #2c3e50; border-radius: 10px;
-            color: white; font-size: 1.2rem; display: flex; justify-content: center; align-items: center;
-        }
-        .d-btn:active { background: var(--accent); color: black; transform: scale(0.95); }
-        .center-boost { background: #c0392b; border-radius: 50%; font-size: 1.5rem; border-color: #e74c3c; }
-
-        .settings-modal {
-            display: none; position: fixed; top: 0; left: 0; 
-            width: 100%; height: 100%; background: rgba(0,0,0,0.85);
-            z-index: 100; align-items: center; justify-content: center;
-            backdrop-filter: blur(5px);
-        }
-        .settings-content {
-            background: #2c3e50; padding: 25px; border-radius: 20px;
-            border: 2px solid var(--accent); width: 90%; max-width: 350px;
-            text-align: center;
-        }
-        .setting-row { margin: 20px 0; display: flex; flex-direction: column; gap: 8px; align-items: center; }
-        .toggle-group { display: flex; gap: 10px; background: #1a252f; padding: 5px; border-radius: 25px; }
-        .toggle-btn {
-            padding: 10px 20px; border: none; background: transparent; color: #7f8c8d;
-            cursor: pointer; font-weight: bold; border-radius: 20px;
-        }
+        .settings-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .settings-content { background: #2c3e50; padding: 25px; border-radius: 20px; border: 2px solid var(--accent); width: 90%; max-width: 350px; text-align: center; }
+        .setting-row { margin: 15px 0; display: flex; flex-direction: column; gap: 5px; align-items: center; }
+        .toggle-group { display: flex; gap: 5px; background: #1a252f; padding: 5px; border-radius: 25px; }
+        .toggle-btn { padding: 8px 12px; border: none; background: transparent; color: #7f8c8d; cursor: pointer; font-size: 0.8rem; font-weight: bold; border-radius: 20px; }
         .toggle-btn.active { background: var(--accent); color: black; }
-        .close-btn { background: var(--accent); color: black; width: 100%; margin-top: 10px; }
 
-        .info-panel {
-            background: var(--ui-dark); padding: 20px; border-radius: 15px;
-            border: 1px solid #444; width: 100%; max-width: 450px;
-            display: block; 
-        }
-        .info-panel h3 { margin-top: 0; color: var(--accent); border-bottom: 1px solid #444; padding-bottom: 10px; }
-        .info-panel p { font-size: 0.95rem; line-height: 1.5; color: #bdc3c7; }
-        .back-link { color: var(--accent); text-decoration: none; margin-top: 15px; display: block; font-weight: bold; }
+        .info-panel { background: var(--ui-dark); padding: 20px; border-radius: 15px; border: 1px solid #444; width: 100%; max-width: 450px; display: block; }
 
         @media (min-width: 900px) {
-            .main-wrapper { flex-direction: row; align-items: flex-start; justify-content: center; }
-            .info-panel { position: sticky; top: 20px; width: 300px; margin-top: 0; }
-            .mobile-controls { display: none !important; }
-            .joystick-boost-btn { display: none !important; }
+            .main-wrapper { flex-direction: row; align-items: flex-start; }
+            .info-panel { position: sticky; top: 20px; width: 300px; }
         }
     </style>
 </head>
@@ -176,507 +81,245 @@
 
     <div class="main-wrapper">
         <div class="game-column">
-            <div class="game-container">
+            <div class="game-container" id="gamePort">
                 <div class="top-bar">
                     <h1 class="game-title">DUCK RESCUE</h1>
-                    <button class="icon-btn settings-trigger" onclick="openSettings()">⚙️</button>
+                    <button class="icon-btn" onclick="openSettings()">⚙️</button>
                 </div>
 
                 <div id="statusOverlay" class="overlay">
                     <h1 id="statusTitle">READY?</h1>
-                    <p id="waveTitle" style="color: #f1c40f; font-size: 1.5rem; margin: 10px 0 0 0; font-weight: bold; letter-spacing: 1px;">Wave 1</p>
-                    <p id="waveDesc" class="wave-desc">Safe tutorial. Learn to swim and rescue.</p>
-                    
-                    <p id="finalDeathText" class="death-text"></p>
+                    <p id="waveTitle" style="color: var(--accent); font-weight: bold;">Wave 1</p>
+                    <p id="waveDesc" style="color:#bdc3c7; font-size: 0.9rem; margin-bottom:20px;"></p>
                     <button id="mainActionBtn" class="btn start-btn" onclick="prepareWave(1)">▶ START WAVE</button>
                 </div>
 
                 <div class="hud-grid">
-                    <div class="hud-box">Wave: <span id="levelDisplay">1</span></div>
-                    <div class="hud-box target-box">Target: <span id="savedDisplay">0</span>/<span id="targetDisplay">3</span></div>
-                    <div class="hud-box score-box">Score: <span id="scoreDisplay">0</span></div>
+                    <div class="hud-box">W: <span id="levelDisplay">1</span></div>
+                    <div class="hud-box target-box">T: <span id="savedDisplay">0</span>/<span id="targetDisplay">3</span></div>
+                    <div class="hud-box">S: <span id="scoreDisplay">0</span></div>
                 </div>
 
                 <div class="sub-header">
-                    <div class="lives-box" id="livesDisplay">❤❤❤❤❤</div>
-                    <div class="death-box">Casualties: <span id="deathDisplay">0</span> 💀</div>
+                    <div id="livesDisplay">❤❤❤❤❤</div>
+                    <div>Casualties: <span id="deathDisplay">0</span> 💀</div>
                 </div>
 
-                <div class="boost-container">
-                    <div id="boostBar"></div>
-                </div>
+                <div class="boost-container"><div id="boostBar"></div></div>
 
                 <div style="position: relative;">
                     <canvas id="gameCanvas"></canvas>
-                    <button id="joyBoostBtn" class="joystick-boost-btn">🚀<br>BOOST</button>
+                    <div id="inlineDpad" class="d-pad-grid overlay-dpad" style="display: none;"></div>
                 </div>
 
-                <div class="ui-layer">
-                    <button class="btn pause-btn" onclick="togglePause()">PAUSE GAME</button>
-                </div>
+                <div class="ui-layer"><button class="btn" style="background:#95a5a6; width:100%;" onclick="togglePause()">PAUSE</button></div>
             </div>
 
-            <div id="settingsModal" class="settings-modal">
-                <div class="settings-content">
-                    <h2 style="color: var(--accent); margin-top:0;">⚙️ SETTINGS</h2>
-                    
-                    <div class="setting-row">
-                        <label>Mobile Control Type:</label>
-                        <div class="toggle-group">
-                            <button class="toggle-btn active" id="btnJoystick" onclick="setControlType('joystick')">Joystick</button>
-                            <button class="toggle-btn" id="btnDpad" onclick="setControlType('dpad')">D-Pad</button>
-                        </div>
-                    </div>
-
-                    <div class="setting-row" id="sensitivityRow">
-                        <label>Joystick Responsiveness:</label>
-                        <input type="range" id="sensSlider" min="10" max="60" value="30" oninput="updateSens(this.value)">
-                        <span id="sensValue" style="color: var(--accent); font-weight: bold;">30</span>
-                        <p style="font-size: 0.8rem; opacity: 0.7; margin:0;">(High = Quick Turns)</p>
-                    </div>
-
-                    <div class="setting-row">
-                        <label>Sound Effects:</label>
-                        <button class="toggle-btn active" id="btnSound" onclick="toggleSound()">ON</button>
-                    </div>
-
-                    <button class="btn close-btn" onclick="closeSettings()">SAVE & CLOSE</button>
-                </div>
-            </div>
-
-            <div id="dpadContainer" class="mobile-controls" style="display: none;">
-                <div class="d-pad-grid">
-                    <button class="d-btn" data-key="UL">◤</button>
-                    <button class="d-btn" data-key="UP">▲</button>
-                    <button class="d-btn" data-key="UR">◥</button>
-                    <button class="d-btn" data-key="LEFT">◀</button>
-                    <button class="d-btn center-boost" data-key="BOOST">🚀</button>
-                    <button class="d-btn" data-key="RIGHT">▶</button>
-                    <button class="d-btn" data-key="DL">◣</button>
-                    <button class="d-btn" data-key="DOWN">▼</button>
-                    <button class="d-btn" data-key="DR">◢</button>
-                </div>
-            </div>
+            <div id="externalDpad" class="mobile-controls" style="display: none;"></div>
         </div>
 
         <div class="info-panel">
             <h3>MISSION BRIEFING</h3>
-            <p><strong>The Storm is Coming!</strong><br>Rescue ducklings to escape.</p>
+            <p id="pcGuide"><strong>PC Controls:</strong><br>• Use <b>Arrow Keys</b> or <b>WASD</b> to swim.<br>• Press <b>SPACE</b> for speed boost.</p>
             <hr style="border-color: #444;">
-            <p>🐊 <strong>Crocodile:</strong><br><span style="color:#e74c3c">DANGER!</span> Eats you AND babies.</p>
-            <p>🐟 <strong>Pike:</strong><br><span style="color:#f1c40f">HARMLESS TO YOU.</span> Only scares babies away.</p>
-            <a href="../index.html" class="back-link">← Back to Gaming Hub</a>
+            <p>🐊 <strong>Crocodile:</strong> Eats you and any ducklings he touches (even unrescued ones!).</p>
+            <p>🐟 <strong>Pike:</strong> Scares ducklings away. Harmless to Mama.</p>
+            <a href="../index.html" style="color:var(--accent); text-decoration:none; font-weight:bold;">← Gaming Hub</a>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="settings-modal">
+        <div class="settings-content">
+            <h2 style="color: var(--accent);">SETTINGS</h2>
+            <div class="setting-row">
+                <label>Control Type:</label>
+                <div class="toggle-group">
+                    <button class="toggle-btn" id="setJoy" onclick="setControl('joystick')">Joystick</button>
+                    <button class="toggle-btn" id="setDpad" onclick="setControl('dpad')">D-Pad</button>
+                </div>
+            </div>
+            <div class="setting-row">
+                <label>D-Pad Style:</label>
+                <div class="toggle-group">
+                    <button class="toggle-btn" id="setExt" onclick="setDpadPos('external')">External</button>
+                    <button class="toggle-btn" id="setOvr" onclick="setDpadPos('overlay')">Overlay</button>
+                </div>
+            </div>
+            <button class="btn" style="background:var(--accent); color:black; width:100%;" onclick="closeSettings()">SAVE</button>
         </div>
     </div>
 
     <script>
-        // --- WAVE CONFIG ---
-        const WAVE_TEXT = {
-            1: "Safe tutorial. Learn to swim and rescue.",
-            2: "Learn to dodge the Pike! (Harmless to you, bad for babies).",
-            3: "High stakes! (Croc eats YOU and babies).",
-            4: "More ducklings to find...",
-            5: "Reflex testing! (Two Crocodiles).",
-            6: "The waters are getting crowded...",
-            7: "Chaos Mode: Multiple Pikes!",
-            8: "Can you survive the Storm?"
-        };
-
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         canvas.width = 400; canvas.height = 400;
 
-        const getStoredSetting = (key, def) => {
-            const val = localStorage.getItem(key);
-            return val ? val : def;
+        const WAVE_TEXT = { 1: "Learn to rescue. Predators are hungry!", 2: "The Pike is here. He scares ducklings away.", 3: "High Stakes! Crocodile eats everything." };
+
+        let settings = { 
+            control: localStorage.getItem('dControl') || 'joystick', 
+            dPos: localStorage.getItem('dPos') || 'external',
+            sens: 30 
         };
 
-        const SETTINGS = {
-            controlType: getStoredSetting('duckControl', 'joystick'),
-            sensitivity: parseInt(getStoredSetting('duckSens', '30')) || 30,
-            soundOn: true
-        };
-
-        let gameState = {
-            active: false, paused: true, level: 1, score: 0,
-            highScore: parseInt(getStoredSetting("duckRescueHighScore", '0')) || 0,
-            lives: 5, deadDucklings: 0, ducksSavedInWave: 0, targetForWave: 3, boost: 100
-        };
-
-        let mama = { x: 200, y: 200, baseSpeed: 3, boostSpeed: 7 };
+        let gameState = { active: false, paused: true, level: 1, score: 0, lives: 5, casualties: 0, saved: 0, target: 3, boost: 100 };
+        let mama = { x: 200, y: 200, speed: 3 };
         let ducklings = []; let history = []; let enemies = [];
         let lostDuckling = { x: 100, y: 100 }; let nest = { x: 340, y: 60, size: 40 };
+        let keys = {}; let isBoosting = false;
 
-        let keys = {};
-        let joystick = { active: false, baseX: 0, baseY: 0, stickX: 0, stickY: 0, radius: 40, dx: 0, dy: 0 };
-        let isBoosting = false;
-        let loopId;
+        // DPAD TEMPLATE
+        const dpadHTML = `
+            <button class="d-btn" data-dir="UL">◤</button><button class="d-btn" data-dir="U">▲</button><button class="d-btn" data-dir="UR">◥</button>
+            <button class="d-btn" data-dir="L">◀</button><button class="d-btn center-boost" data-dir="B">🚀</button><button class="d-btn" data-dir="R">▶</button>
+            <button class="d-btn" data-dir="DL">◣</button><button class="d-btn" data-dir="D">▼</button><button class="d-btn" data-dir="DR">◢</button>
+        `;
 
-        // --- AUDIO ---
-        let audioCtx;
-        function initAudio() {
-            if (!audioCtx) {
-                const AC = window.AudioContext || window.webkitAudioContext;
-                if (AC) audioCtx = new AC();
-            }
-            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-        }
-
-        const SoundManager = {
-            play: (type) => {
-                if(!SETTINGS.soundOn || !audioCtx || audioCtx.state === 'suspended') return;
-                try {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.connect(gain); gain.connect(audioCtx.destination);
-                    const now = audioCtx.currentTime;
-
-                    if (type === 'collect') {
-                        osc.frequency.setValueAtTime(600, now);
-                        osc.frequency.exponentialRampToValueAtTime(900, now+0.1);
-                        gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now+0.1);
-                        osc.start(now); osc.stop(now+0.1);
-                    } else if (type === 'crunch') {
-                        osc.type = 'sawtooth';
-                        osc.frequency.setValueAtTime(150, now);
-                        osc.frequency.linearRampToValueAtTime(50, now+0.2);
-                        gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0, now+0.2);
-                        osc.start(now); osc.stop(now+0.2);
-                    } else if (type === 'levelup') {
-                        osc.type = 'square';
-                        osc.frequency.setValueAtTime(440, now);
-                        osc.frequency.setValueAtTime(880, now+0.2);
-                        gain.gain.setValueAtTime(0.05, now); gain.gain.linearRampToValueAtTime(0, now+0.6);
-                        osc.start(now); osc.stop(now+0.6);
-                    }
-                } catch(e){}
-            }
-        };
-
-        // --- CORE LOGIC ---
-        
-        // 1. Triggered by the main Start Button
         function prepareWave(lvl) {
-            initAudio(); // Initialize audio context
+            if (lvl === 1) { gameState.score = 0; gameState.lives = 5; gameState.casualties = 0; }
+            gameState.active = true; gameState.paused = false; gameState.level = lvl;
+            gameState.saved = 0; gameState.target = 2 + lvl;
+            mama.x = 200; mama.y = 200; enemies = []; history = []; ducklings = [];
             
-            // If Level 1, do a full reset (score, lives, etc)
-            if (lvl === 1) {
-                gameState.score = 0; 
-                gameState.lives = 5; 
-                gameState.deadDucklings = 0;
-            }
+            let speed = 1 + (lvl * 0.15);
+            if (lvl >= 2) enemies.push({ type: 'pike', x: -50, y: 150, s: 2 * speed });
+            if (lvl >= 3) enemies.push({ type: 'croc', x: 500, y: 300, s: -1.2 * speed });
             
-            startWave(lvl);
-        }
-
-        function startWave(lvl) {
-            gameState.active = true;
-            gameState.paused = false;
-            gameState.level = lvl;
-            gameState.ducksSavedInWave = 0;
-            gameState.targetForWave = 2 + lvl;
-            gameState.boost = 100;
-            
-            // Difficulty Math
-            let speedMult = 1 + (lvl * 0.15);
-            
-            // Reset Entities
-            mama.x = 200; mama.y = 200; 
-            history = []; 
-            ducklings = []; // Clear carry-over babies to prevent instant win bugs
-            enemies = [];
-            
-            // Enemy Spawning
-            if (lvl >= 2) enemies.push({ type: 'pike', x: -50, y: 100, speed: 2 * speedMult });
-            if (lvl >= 3) enemies.push({ type: 'croc', x: 500, y: 300, speed: -1.2 * speedMult });
-            if (lvl >= 5) enemies.push({ type: 'croc', x: 500, y: 100, speed: -1.8 * speedMult });
-            if (lvl >= 7) enemies.push({ type: 'pike', x: -50, y: 300, speed: 2.5 * speedMult });
-            
-            spawnBaby();
-            updateUI();
-            
-            // Hide Overlay
+            spawnBaby(); updateUI();
             document.getElementById("statusOverlay").style.display = "none";
-            document.getElementById("finalDeathText").innerText = "";
-            
-            if (loopId) cancelAnimationFrame(loopId);
-            loop();
+            requestAnimationFrame(loop);
         }
 
-        function checkWaveProgress() {
-            if (gameState.ducksSavedInWave >= gameState.targetForWave) {
-                const nextLvl = gameState.level + 1;
-                showIntermission(nextLvl);
-            }
-        }
-
-        function showIntermission(nextLvl) {
-            gameState.active = false; // Stop game loop
-            gameState.paused = true;
-            SoundManager.play('levelup');
-
-            // Show Ready Screen for NEXT level
-            document.getElementById("statusOverlay").style.display = "flex";
-            document.getElementById("statusTitle").innerText = "WAVE COMPLETE!";
-            document.getElementById("waveTitle").innerText = "Next: Wave " + nextLvl;
-            document.getElementById("waveDesc").innerText = WAVE_TEXT[nextLvl] || "Survive the storm!";
-            
-            // Update Button to Start Next Wave
-            const btn = document.getElementById("mainActionBtn");
-            btn.innerText = "▶ START WAVE " + nextLvl;
-            btn.onclick = function() { prepareWave(nextLvl); };
-        }
+        function spawnBaby() { lostDuckling.x = 50 + Math.random()*300; lostDuckling.y = 50 + Math.random()*300; }
 
         function update() {
-            if (gameState.paused || !gameState.active) return;
-
+            if (gameState.paused) return;
             let mx = 0, my = 0;
-            if (keys["ArrowUp"] || keys["KeyW"]) my = -1;
-            if (keys["ArrowDown"] || keys["KeyS"]) my = 1;
-            if (keys["ArrowLeft"] || keys["KeyA"]) mx = -1;
-            if (keys["ArrowRight"] || keys["KeyD"]) mx = 1;
+            if (keys.ArrowUp || keys.KeyW) my = -1; if (keys.ArrowDown || keys.KeyS) my = 1;
+            if (keys.ArrowLeft || keys.KeyA) mx = -1; if (keys.ArrowRight || keys.KeyD) mx = 1;
 
-            if (SETTINGS.controlType === 'joystick' && joystick.active) {
-                mx = joystick.dx;
-                my = joystick.dy;
-            }
-
-            let currentSpeed = mama.baseSpeed;
-            if (isBoosting && gameState.boost > 0) {
-                currentSpeed = mama.boostSpeed;
-                gameState.boost -= 1.5;
-            } else {
-                if (!keys["Space"] && !joystick.boostHeld) isBoosting = false; 
-                if (gameState.boost < 100) gameState.boost += 0.5;
-            }
+            let s = isBoosting && gameState.boost > 0 ? 7 : 3;
+            if (isBoosting) gameState.boost -= 1.5; else if (gameState.boost < 100) gameState.boost += 0.5;
             document.getElementById("boostBar").style.width = gameState.boost + "%";
 
-            if (mx !== 0 || my !== 0) {
-                if (!joystick.active) { 
-                    let len = Math.sqrt(mx*mx + my*my);
-                    if (len > 0) { mx /= len; my /= len; }
-                }
-                mama.x += mx * currentSpeed;
-                mama.y += my * currentSpeed;
-            }
-
-            mama.x = Math.max(20, Math.min(380, mama.x));
-            mama.y = Math.max(20, Math.min(380, mama.y));
-
-            history.unshift({x: mama.x, y: mama.y});
-            if (history.length > 300) history.pop();
+            mama.x += mx * s; mama.y += my * s;
+            mama.x = Math.max(20, Math.min(380, mama.x)); mama.y = Math.max(20, Math.min(380, mama.y));
+            history.unshift({x: mama.x, y: mama.y}); if (history.length > 300) history.pop();
 
             enemies.forEach(e => {
-                e.x += e.speed;
-                if (e.speed > 0 && e.x > 450) { e.x = -50; e.y = 50 + Math.random()*300; }
-                if (e.speed < 0 && e.x < -100) { e.x = 500; e.y = 50 + Math.random()*300; }
+                e.x += e.s;
+                if (e.x > 450 || e.x < -100) e.x = e.s > 0 ? -50 : 500;
                 
-                if (Math.hypot(mama.x - e.x, mama.y - e.y) < 30) { 
-                    if (e.type === 'croc') { SoundManager.play('crunch'); loseLife(); }
+                // MAMA COLLISION
+                if (Math.hypot(mama.x - e.x, mama.y - e.y) < 30 && e.type === 'croc') loseLife();
+
+                // PRE-RESCUE BABY COLLISION (The New Logic)
+                if (Math.hypot(lostDuckling.x - e.x, lostDuckling.y - e.y) < 25) {
+                    gameState.casualties++; spawnBaby(); updateUI();
                 }
 
-                for (let i = 0; i < ducklings.length; i++) {
-                    let idx = (i+1)*14;
-                    if (history[idx]) {
-                        if (Math.hypot(history[idx].x - e.x, history[idx].y - e.y) < 25) {
-                            if (e.type === 'croc') {
-                                SoundManager.play('crunch');
-                                gameState.deadDucklings += (ducklings.length - i);
-                                ducklings.splice(i); updateUI(); break;
-                            } else {
-                                ducklings.splice(i); break;
-                            }
-                        }
+                // LINE COLLISION
+                ducklings.forEach((d, i) => {
+                    let idx = (i+1)*15;
+                    if (history[idx] && Math.hypot(history[idx].x - e.x, history[idx].y - e.y) < 25) {
+                        if (e.type === 'croc') gameState.casualties += (ducklings.length - i);
+                        ducklings.splice(i); updateUI();
                     }
-                }
+                });
             });
 
-            if (Math.hypot(mama.x - lostDuckling.x, mama.y - lostDuckling.y) < 30) {
-                SoundManager.play('collect'); ducklings.push({}); spawnBaby();
-            }
-            if (Math.hypot(mama.x - nest.x, mama.y - nest.y) < nest.size && ducklings.length > 0) {
-                gameState.score += ducklings.length;
-                gameState.ducksSavedInWave += ducklings.length;
-                ducklings = []; updateUI(); checkWaveProgress();
+            if (Math.hypot(mama.x - lostDuckling.x, mama.y - lostDuckling.y) < 30) { ducklings.push({}); spawnBaby(); }
+            if (Math.hypot(mama.x - nest.x, mama.y - nest.y) < 35 && ducklings.length > 0) {
+                gameState.score += ducklings.length; gameState.saved += ducklings.length;
+                ducklings = []; updateUI();
+                if (gameState.saved >= gameState.target) nextWave();
             }
         }
+
+        function loop() { if (!gameState.active || gameState.paused) return; update(); draw(); requestAnimationFrame(loop); }
 
         function draw() {
-            ctx.clearRect(0, 0, 400, 400);
-            ctx.textAlign = "center"; ctx.textBaseline = "middle";
-            ctx.font = "45px serif"; ctx.fillText("🪺", nest.x, nest.y); 
-
-            enemies.forEach(e => {
-                ctx.font = (e.type === 'croc' ? "45px" : "30px") + " serif";
-                ctx.save(); ctx.translate(e.x, e.y);
-                if (e.speed > 0) ctx.scale(-1, 1);
-                ctx.fillText(e.type === 'croc' ? "🐊" : "🐟", 0, 0); ctx.restore();
+            ctx.clearRect(0,0,400,400);
+            ctx.font = "40px serif"; ctx.fillText("🪺", nest.x-20, nest.y+15);
+            ctx.fillText("🐣", lostDuckling.x-15, lostDuckling.y+10);
+            enemies.forEach(e => ctx.fillText(e.type === 'croc' ? "🐊" : "🐟", e.x-15, e.y+10));
+            ctx.fillText("🦢", mama.x-20, mama.y+15);
+            ducklings.forEach((d,i) => {
+                let p = history[(i+1)*15];
+                if(p) ctx.fillText("🐥", p.x-10, p.y+10);
             });
-
-            ctx.save(); ctx.translate(mama.x, mama.y);
-            if (keys["ArrowLeft"] || keys["KeyA"] || (joystick.active && joystick.dx < 0)) ctx.scale(-1, 1);
-            if (isBoosting) { ctx.shadowColor = "white"; ctx.shadowBlur = 15; }
-            ctx.font = "40px serif"; ctx.fillText("🦢", 0, 0); ctx.restore();
-            ctx.shadowBlur = 0;
-
-            ducklings.forEach((d, i) => {
-                let idx = (i+1)*14;
-                if (history[idx]) {
-                    let bob = Math.sin(Date.now() * 0.01 + i) * 3;
-                    ctx.font = "20px serif"; ctx.fillText("🐥", history[idx].x, history[idx].y + bob);
-                }
-            });
-            ctx.font = "24px serif"; ctx.fillText("🐣", lostDuckling.x, lostDuckling.y);
-
-            if (SETTINGS.controlType === 'joystick' && joystick.active) {
-                ctx.beginPath(); ctx.arc(joystick.baseX, joystick.baseY, joystick.radius, 0, Math.PI*2);
-                ctx.fillStyle = "rgba(255, 255, 255, 0.1)"; ctx.fill(); ctx.strokeStyle = "rgba(255,255,255,0.3)"; ctx.stroke();
-                ctx.beginPath(); ctx.arc(joystick.stickX, joystick.stickY, 15, 0, Math.PI*2);
-                ctx.fillStyle = "rgba(241, 196, 15, 0.8)"; ctx.fill();
-            }
         }
 
-        function loop() { update(); draw(); loopId = requestAnimationFrame(loop); }
-        function spawnBaby() { lostDuckling.x = 40+Math.random()*320; lostDuckling.y = 40+Math.random()*320; }
-        
         function updateUI() {
             document.getElementById("scoreDisplay").innerText = gameState.score;
-            document.getElementById("deathDisplay").innerText = gameState.deadDucklings;
-            document.getElementById("levelDisplay").innerText = gameState.level;
-            document.getElementById("savedDisplay").innerText = gameState.ducksSavedInWave;
-            document.getElementById("targetDisplay").innerText = gameState.targetForWave;
-            let h = ""; for(let i=0; i<gameState.lives; i++) h += "❤";
-            document.getElementById("livesDisplay").innerText = h;
+            document.getElementById("deathDisplay").innerText = gameState.casualties;
+            document.getElementById("savedDisplay").innerText = gameState.saved;
+            document.getElementById("targetDisplay").innerText = gameState.target;
+            document.getElementById("livesDisplay").innerText = "❤".repeat(gameState.lives);
         }
 
         function loseLife() {
             gameState.lives--; updateUI();
-            if (gameState.lives <= 0) gameOver();
-            else {
-                mama.x = 200; mama.y = 200; history = [];
-                enemies.forEach(e => { if(e.speed > 0) e.x = -50; else e.x = 500; });
-            }
+            if (gameState.lives <= 0) gameOver(); else { mama.x=200; mama.y=200; history=[]; }
+        }
+
+        function nextWave() {
+            gameState.active = false;
+            let next = gameState.level + 1;
+            document.getElementById("statusOverlay").style.display = "flex";
+            document.getElementById("statusTitle").innerText = "WAVE COMPLETE";
+            document.getElementById("waveTitle").innerText = "Wave " + next;
+            document.getElementById("waveDesc").innerText = WAVE_TEXT[next] || "The storm intensifies!";
+            document.getElementById("mainActionBtn").onclick = () => prepareWave(next);
         }
 
         function gameOver() {
-            gameState.active = false; gameState.paused = true;
-            if (gameState.score > gameState.highScore) localStorage.setItem("duckRescueHighScore", gameState.score);
-            
+            gameState.active = false;
             document.getElementById("statusOverlay").style.display = "flex";
             document.getElementById("statusTitle").innerText = "GAME OVER";
-            document.getElementById("waveTitle").innerText = "";
-            document.getElementById("waveDesc").innerText = "You reached Wave " + gameState.level;
-            document.getElementById("finalDeathText").innerText = "Casualties: " + gameState.deadDucklings;
-            
-            const btn = document.getElementById("mainActionBtn");
-            btn.innerText = "▶ RESTART"; 
-            btn.onclick = function() { prepareWave(1); };
+            document.getElementById("waveDesc").innerText = "Final Score: " + gameState.score;
+            document.getElementById("mainActionBtn").onclick = () => prepareWave(1);
         }
 
-        function togglePause() {
-            if (!gameState.active) return;
-            gameState.paused = !gameState.paused;
-            const overlay = document.getElementById("statusOverlay");
-            overlay.style.display = gameState.paused ? "flex" : "none";
+        function togglePause() { gameState.paused = !gameState.paused; if(!gameState.paused) loop(); }
+
+        // SETTINGS LOGIC
+        function openSettings() { document.getElementById("settingsModal").style.display="flex"; }
+        function closeSettings() { document.getElementById("settingsModal").style.display="none"; applyUI(); }
+        function setControl(c) { settings.control = c; localStorage.setItem('dControl', c); applyUI(); }
+        function setDpadPos(p) { settings.dPos = p; localStorage.setItem('dPos', p); applyUI(); }
+
+        function applyUI() {
+            const ext = document.getElementById("externalDpad");
+            const inl = document.getElementById("inlineDpad");
+            ext.style.display = "none"; inl.style.display = "none";
             
-            if(gameState.paused) {
-                document.getElementById("statusTitle").innerText = "PAUSED";
-                document.getElementById("waveTitle").innerText = "Wave " + gameState.level;
-                document.getElementById("waveDesc").innerText = "";
-                document.getElementById("finalDeathText").innerText = "";
-                const btn = document.getElementById("mainActionBtn");
-                btn.innerText = "RESUME"; 
-                btn.onclick = togglePause;
-            } else loop();
+            if (settings.control === 'dpad') {
+                if (settings.dPos === 'external') { ext.style.display = "flex"; ext.innerHTML = dpadHTML; }
+                else { inl.style.display = "grid"; inl.innerHTML = dpadHTML; }
+                attachDpadEvents();
+            }
+            document.getElementById("setJoy").className = settings.control === 'joystick' ? 'toggle-btn active' : 'toggle-btn';
+            document.getElementById("setDpad").className = settings.control === 'dpad' ? 'toggle-btn active' : 'toggle-btn';
+            document.getElementById("setExt").className = settings.dPos === 'external' ? 'toggle-btn active' : 'toggle-btn';
+            document.getElementById("setOvr").className = settings.dPos === 'overlay' ? 'toggle-btn active' : 'toggle-btn';
         }
 
-        function openSettings() { if(gameState.active && !gameState.paused) togglePause(); document.getElementById("settingsModal").style.display = "flex"; applySettings(); }
-        function closeSettings() { document.getElementById("settingsModal").style.display = "none"; }
-        function setControlType(type) { SETTINGS.controlType = type; localStorage.setItem('duckControl', type); applySettings(); }
-        function updateSens(val) { SETTINGS.sensitivity = parseInt(val); document.getElementById("sensValue").innerText = val; localStorage.setItem('duckSens', val); }
-        function toggleSound() { SETTINGS.soundOn = !SETTINGS.soundOn; applySettings(); }
-        
-        function applySettings() {
-            document.getElementById("btnJoystick").classList.toggle('active', SETTINGS.controlType === 'joystick');
-            document.getElementById("btnDpad").classList.toggle('active', SETTINGS.controlType === 'dpad');
-            document.getElementById("sensSlider").value = SETTINGS.sensitivity;
-            document.getElementById("sensValue").innerText = SETTINGS.sensitivity;
-            document.getElementById("btnSound").classList.toggle('active', SETTINGS.soundOn);
-            document.getElementById("btnSound").innerText = SETTINGS.soundOn ? "ON" : "OFF";
-            document.getElementById("dpadContainer").style.display = SETTINGS.controlType === 'dpad' ? 'flex' : 'none';
-            document.getElementById("joyBoostBtn").style.display = (SETTINGS.controlType === 'joystick' && gameState.active) ? 'flex' : 'none';
+        function attachDpadEvents() {
+            document.querySelectorAll('.d-btn').forEach(b => {
+                b.onpointerdown = (e) => {
+                    const d = b.dataset.dir;
+                    if(d === 'B') isBoosting = true;
+                    else { if(d.includes('U')) keys.ArrowUp=true; if(d.includes('D')) keys.ArrowDown=true; if(d.includes('L')) keys.ArrowLeft=true; if(d.includes('R')) keys.ArrowRight=true; }
+                };
+                b.onpointerup = b.onpointerleave = () => { isBoosting=false; keys={}; };
+            });
         }
 
-        window.addEventListener("keydown", (e) => {
-            if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space"].includes(e.code)) e.preventDefault();
-            keys[e.code] = true; if(e.code === "Space") isBoosting = true;
-        });
-        window.addEventListener("keyup", (e) => { keys[e.code] = false; if(e.code === "Space") isBoosting = false; });
+        window.onkeydown = (e) => { keys[e.code]=true; if(e.code==='Space') isBoosting=true; };
+        window.onkeyup = (e) => { keys[e.code]=false; if(e.code==='Space') isBoosting=false; };
 
-        canvas.addEventListener("touchstart", (e) => {
-            if (SETTINGS.controlType !== 'joystick' || !gameState.active || gameState.paused) return;
-            e.preventDefault();
-            const rect = canvas.getBoundingClientRect();
-            const touch = e.touches[0];
-            joystick.active = true;
-            joystick.baseX = (touch.clientX - rect.left) * (canvas.width / rect.width);
-            joystick.baseY = (touch.clientY - rect.top) * (canvas.height / rect.height);
-            joystick.stickX = joystick.baseX; joystick.stickY = joystick.baseY;
-            document.getElementById("joyBoostBtn").style.display = 'flex';
-        }, {passive: false});
-
-        canvas.addEventListener("touchmove", (e) => {
-            if (!joystick.active) return;
-            e.preventDefault();
-            const rect = canvas.getBoundingClientRect();
-            const touch = e.touches[0];
-            const tx = (touch.clientX - rect.left) * (canvas.width / rect.width);
-            const ty = (touch.clientY - rect.top) * (canvas.height / rect.height);
-            const dist = Math.hypot(tx - joystick.baseX, ty - joystick.baseY);
-            const angle = Math.atan2(ty - joystick.baseY, tx - joystick.baseX);
-            const limit = Math.min(dist, joystick.radius);
-            joystick.stickX = joystick.baseX + Math.cos(angle) * limit;
-            joystick.stickY = joystick.baseY + Math.sin(angle) * limit;
-
-            const sensFactor = 70 - SETTINGS.sensitivity; 
-            const force = Math.min(dist / sensFactor, 1);
-            
-            joystick.dx = Math.cos(angle) * force;
-            joystick.dy = Math.sin(angle) * force;
-        }, {passive: false});
-
-        canvas.addEventListener("touchend", () => {
-            joystick.active = false; joystick.dx = 0; joystick.dy = 0;
-        });
-
-        const boostBtn = document.getElementById("joyBoostBtn");
-        boostBtn.addEventListener("touchstart", (e)=>{ e.preventDefault(); isBoosting=true; joystick.boostHeld=true; });
-        boostBtn.addEventListener("touchend", (e)=>{ e.preventDefault(); isBoosting=false; joystick.boostHeld=false; });
-
-        document.querySelectorAll('.d-btn').forEach(btn => {
-            const start = (e) => {
-                if(!gameState.active) return;
-                e.preventDefault();
-                const k = btn.dataset.key;
-                if(k === 'BOOST') isBoosting = true;
-                else {
-                    if(k.includes('U')) keys["ArrowUp"] = true;
-                    if(k.includes('D')) keys["ArrowDown"] = true;
-                    if(k.includes('L')) keys["ArrowLeft"] = true;
-                    if(k.includes('R')) keys["ArrowRight"] = true;
-                }
-            };
-            const end = (e) => {
-                e.preventDefault(); isBoosting = false;
-                keys["ArrowUp"] = false; keys["ArrowDown"] = false; keys["ArrowLeft"] = false; keys["ArrowRight"] = false;
-            };
-            btn.addEventListener('touchstart', start, {passive: false});
-            btn.addEventListener('touchend', end);
-            btn.addEventListener('mousedown', start);
-            btn.addEventListener('mouseup', end);
-        });
-        
-        applySettings();
+        applyUI();
     </script>
 </body>
 </html>
