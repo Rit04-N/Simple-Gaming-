@@ -47,7 +47,7 @@
 
         canvas { background: var(--water-bg); display: block; margin: auto; border-radius: 10px; width: 100%; aspect-ratio: 1 / 1; }
 
-        /* --- D-PAD PLACEMENT LOGIC --- */
+        /* --- OVERLAY D-PAD STYLES --- */
         .overlay-dpad {
             position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
             z-index: 45; opacity: 0.5; pointer-events: auto; scale: 0.85;
@@ -72,6 +72,13 @@
         input[type=range] { width: 80%; }
 
         .info-panel { background: var(--ui-dark); padding: 20px; border-radius: 15px; border: 1px solid #444; width: 100%; max-width: 450px; display: block; }
+        
+        /* PC Key Guide */
+        .key-badge { 
+            display: inline-block; padding: 2px 8px; background: #34495e; 
+            border: 1px solid #7f8c8d; border-radius: 4px; font-family: monospace; 
+            color: #ecf0f1; font-size: 0.8rem; margin: 0 2px;
+        }
 
         /* JOYSTICK BOOST BTN */
         .joystick-boost-btn {
@@ -123,22 +130,42 @@
 
                 <div style="position: relative;">
                     <canvas id="gameCanvas"></canvas>
-                    <div id="inlineDpad" class="d-pad-grid overlay-dpad" style="display: none;"></div>
+                    
+                    <div id="overlayDpad" class="d-pad-grid overlay-dpad" style="display: none;">
+                        <button class="d-btn" data-key="UL">◤</button><button class="d-btn" data-key="UP">▲</button><button class="d-btn" data-key="UR">◥</button>
+                        <button class="d-btn" data-key="LEFT">◀</button><button class="d-btn center-boost" data-key="BOOST">🚀</button><button class="d-btn" data-key="RIGHT">▶</button>
+                        <button class="d-btn" data-key="DL">◣</button><button class="d-btn" data-key="DOWN">▼</button><button class="d-btn" data-key="DR">◢</button>
+                    </div>
+
                     <button id="joyBoostBtn" class="joystick-boost-btn">🚀<br>BOOST</button>
                 </div>
 
                 <div class="ui-layer"><button class="btn" style="background:#95a5a6; width:100%;" onclick="togglePause()">PAUSE</button></div>
             </div>
 
-            <div id="externalDpad" class="mobile-controls" style="display: none;"></div>
+            <div id="externalDpad" class="mobile-controls" style="display: none;">
+                <div class="d-pad-grid">
+                    <button class="d-btn" data-key="UL">◤</button><button class="d-btn" data-key="UP">▲</button><button class="d-btn" data-key="UR">◥</button>
+                    <button class="d-btn" data-key="LEFT">◀</button><button class="d-btn center-boost" data-key="BOOST">🚀</button><button class="d-btn" data-key="RIGHT">▶</button>
+                    <button class="d-btn" data-key="DL">◣</button><button class="d-btn" data-key="DOWN">▼</button><button class="d-btn" data-key="DR">◢</button>
+                </div>
+            </div>
         </div>
 
         <div class="info-panel">
             <h3>MISSION BRIEFING</h3>
-            <p id="pcGuide"><strong>PC Controls:</strong><br>• Use <b>Arrow Keys</b> or <b>WASD</b> to swim.<br>• Press <b>SPACE</b> for speed boost.</p>
+            
+            <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                <strong style="color:#3498db">🖥️ PC CONTROLS</strong><br>
+                <div style="margin-top:5px; font-size: 0.9rem;">
+                    Move: <span class="key-badge">WASD</span> or <span class="key-badge">ARROWS</span><br>
+                    Boost: <span class="key-badge">SPACE</span>
+                </div>
+            </div>
+
             <hr style="border-color: #444;">
             <p>🐊 <strong>Crocodile:</strong><br> Eats YOU and any ducklings he touches!</p>
-            <p>🐟 <strong>Pike:</strong><br> Scares ducklings away (Harmless to Mama).</p>
+            <p>🐟 <strong>Pike:</strong><br> Harmless to Mama, but <span style="color:#e74c3c">DEADLY</span> to ducklings if they aren't rescued yet!</p>
             <a href="../index.html" style="color:var(--accent); text-decoration:none; font-weight:bold;">← Gaming Hub</a>
         </div>
     </div>
@@ -190,7 +217,7 @@
 
         let settings = { 
             control: getStore('dControl','joystick'), 
-            dPos: getStore('dPos','external'),
+            dPos: getStore('dPos','external'), // New Setting
             sens: parseInt(getStore('dSens','30')),
             sound: true
         };
@@ -219,12 +246,6 @@
                 } catch(e){}
             }
         };
-
-        const dpadHTML = `
-            <button class="d-btn" data-dir="UL">◤</button><button class="d-btn" data-dir="U">▲</button><button class="d-btn" data-dir="UR">◥</button>
-            <button class="d-btn" data-dir="L">◀</button><button class="d-btn center-boost" data-dir="B">🚀</button><button class="d-btn" data-dir="R">▶</button>
-            <button class="d-btn" data-dir="DL">◣</button><button class="d-btn" data-dir="D">▼</button><button class="d-btn" data-dir="DR">◢</button>
-        `;
 
         function prepareWave(lvl) {
             if(!audioCtx) { audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }
@@ -264,7 +285,6 @@
 
             // NORMALIZE MOVEMENT
             if(mx!==0 || my!==0) {
-                 // Joystick is already normalized roughly by logic below
                  if(!joystick.active) { let l = Math.sqrt(mx*mx+my*my); if(l>0){mx/=l; my/=l;} }
                  mama.x += mx * s; mama.y += my * s;
             }
@@ -279,17 +299,27 @@
                 // MAMA COLLISION
                 if (Math.hypot(mama.x - e.x, mama.y - e.y) < 30 && e.type === 'croc') { Sfx.play('hit'); loseLife(); }
 
-                // PRE-RESCUE BABY COLLISION (Casualty Logic)
+                // --- NEW FEATURE: PRE-RESCUE DEATH ---
+                // If Pike or Croc hits the unrescued baby, it dies.
                 if (Math.hypot(lostDuckling.x - e.x, lostDuckling.y - e.y) < 25) {
-                    Sfx.play('hit'); gameState.casualties++; spawnBaby(); updateUI();
+                    Sfx.play('hit'); 
+                    gameState.casualties++; 
+                    spawnBaby(); // Respawn elsewhere
+                    updateUI();
                 }
 
-                // LINE COLLISION
+                // LINE COLLISION (Post-Rescue)
                 ducklings.forEach((d, i) => {
                     let idx = (i+1)*15;
                     if (history[idx] && Math.hypot(history[idx].x - e.x, history[idx].y - e.y) < 25) {
-                        if (e.type === 'croc') { Sfx.play('hit'); gameState.casualties += (ducklings.length - i); }
-                        ducklings.splice(i); updateUI();
+                        // Pike hits baby = Scary, baby runs away (dies)
+                        // Croc hits baby = Eaten (dies)
+                        Sfx.play('hit'); 
+                        // Logic: Lose everyone from this point backwards
+                        let lostCount = ducklings.length - i;
+                        gameState.casualties += lostCount; 
+                        ducklings.splice(i); // Cut the line
+                        updateUI();
                     }
                 });
             });
@@ -373,7 +403,7 @@
             } else loop();
         }
 
-        // SETTINGS
+        // SETTINGS & UI LOGIC
         function openSettings() { if(gameState.active && !gameState.paused) togglePause(); document.getElementById("settingsModal").style.display="flex"; applyUI(); }
         function closeSettings() { document.getElementById("settingsModal").style.display="none"; applyUI(); }
         function setControl(c) { settings.control = c; localStorage.setItem('dControl', c); applyUI(); }
@@ -383,14 +413,14 @@
 
         function applyUI() {
             const ext = document.getElementById("externalDpad");
-            const inl = document.getElementById("inlineDpad");
+            const inl = document.getElementById("overlayDpad"); // Internal
             const joyBtn = document.getElementById("joyBoostBtn");
             const sensRow = document.getElementById("sensRow");
             const dpadPosRow = document.getElementById("dpadPosRow");
 
             ext.style.display = "none"; inl.style.display = "none"; joyBtn.style.display="none";
 
-            // Button States
+            // Update Active States
             document.getElementById("setJoy").className = settings.control === 'joystick' ? 'toggle-btn active' : 'toggle-btn';
             document.getElementById("setDpad").className = settings.control === 'dpad' ? 'toggle-btn active' : 'toggle-btn';
             document.getElementById("setExt").className = settings.dPos === 'external' ? 'toggle-btn active' : 'toggle-btn';
@@ -400,26 +430,35 @@
             document.getElementById("sensSlider").value = settings.sens;
 
             if (settings.control === 'dpad') {
-                sensRow.style.display = 'none'; dpadPosRow.style.display = 'flex';
-                if (settings.dPos === 'external') { ext.style.display = "flex"; ext.innerHTML = dpadHTML; }
-                else { inl.style.display = "grid"; inl.innerHTML = dpadHTML; }
-                attachDpadEvents();
+                sensRow.style.display = 'none'; 
+                dpadPosRow.style.display = 'flex'; // Show D-Pad Position Toggle
+                
+                if (settings.dPos === 'external') { 
+                    ext.style.display = "flex"; // Bottom Panel
+                } else { 
+                    inl.style.display = "grid"; // Overlay
+                }
             } else {
-                sensRow.style.display = 'flex'; dpadPosRow.style.display = 'none';
+                sensRow.style.display = 'flex'; 
+                dpadPosRow.style.display = 'none';
                 if(gameState.active && !gameState.paused) joyBtn.style.display="flex";
             }
         }
 
-        function attachDpadEvents() {
-            document.querySelectorAll('.d-btn').forEach(b => {
-                b.onpointerdown = (e) => {
-                    const d = b.dataset.dir;
-                    if(d === 'B') isBoosting = true;
-                    else { if(d.includes('U')) keys.ArrowUp=true; if(d.includes('D')) keys.ArrowDown=true; if(d.includes('L')) keys.ArrowLeft=true; if(d.includes('R')) keys.ArrowRight=true; }
-                };
-                b.onpointerup = b.onpointerleave = () => { isBoosting=false; keys={}; };
-            });
-        }
+        // CONTROL HANDLERS (Works for both Overlay and External buttons)
+        document.querySelectorAll('.d-btn').forEach(b => {
+            b.onpointerdown = (e) => {
+                const d = b.dataset.key;
+                if(d === 'BOOST') isBoosting = true;
+                else { 
+                    if(d.includes('U')) keys.ArrowUp=true; 
+                    if(d.includes('D')) keys.ArrowDown=true; 
+                    if(d.includes('L')) keys.ArrowLeft=true; 
+                    if(d.includes('R')) keys.ArrowRight=true; 
+                }
+            };
+            b.onpointerup = b.onpointerleave = () => { isBoosting=false; keys={}; };
+        });
 
         window.onkeydown = (e) => { keys[e.code]=true; if(e.code==='Space') isBoosting=true; };
         window.onkeyup = (e) => { keys[e.code]=false; if(e.code==='Space') isBoosting=false; };
