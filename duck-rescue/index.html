@@ -37,9 +37,15 @@
         .game-title { color: var(--accent); margin: 0; text-shadow: 2px 2px 0 #000; font-size: 1.5rem; }
         .icon-btn { background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 40px; height: 40px; font-size: 1.2rem; cursor: pointer; color: white; display: flex; justify-content: center; align-items: center; }
 
-        .hud-grid { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 5px; margin-bottom: 8px; }
-        .hud-box { background: rgba(0,0,0,0.3); padding: 5px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; }
-        .target-box { border: 1px solid var(--accent); color: var(--accent); }
+        /* --- UPDATED HUD --- */
+        .hud-grid { display: flex; justify-content: space-between; gap: 5px; margin-bottom: 8px; }
+        .hud-box { 
+            background: rgba(0,0,0,0.3); padding: 8px 12px; 
+            border-radius: 8px; font-weight: bold; font-size: 0.9rem;
+            flex: 1; display: flex; justify-content: center; align-items: center; white-space: nowrap;
+        }
+        .target-box { border: 1px solid var(--accent); color: var(--accent); flex: 1.2; }
+        
         .sub-header { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem;}
 
         .boost-container { width: 100%; height: 8px; background: rgba(0,0,0,0.5); border-radius: 4px; margin-bottom: 8px; overflow: hidden; }
@@ -49,13 +55,28 @@
 
         /* --- OVERLAY D-PAD STYLES --- */
         .overlay-dpad {
-            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-            z-index: 45; opacity: 0.5; pointer-events: auto; scale: 0.85;
+            position: absolute; 
+            bottom: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 45; opacity: 0.6; pointer-events: none; 
+            transition: opacity 0.2s;
+        }
+        .overlay-dpad:hover { opacity: 0.9; }
+
+        /* DRAG HANDLE */
+        .dpad-handle {
+            position: absolute; top: -25px; right: -25px;
+            width: 35px; height: 35px;
+            background: rgba(241, 196, 15, 0.8); color: black;
+            border-radius: 50%; border: 2px solid white;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.2rem; cursor: move; pointer-events: auto;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            z-index: 50;
         }
 
         .mobile-controls { margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 20px; display: flex; justify-content: center; }
-        .d-pad-grid { display: grid; grid-template-columns: repeat(3, 60px); grid-template-rows: repeat(3, 60px); gap: 8px; }
-        .d-btn { background: #34495e; border: 2px solid #2c3e50; border-radius: 10px; color: white; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; }
+        .d-pad-grid { display: grid; grid-template-columns: repeat(3, 60px); grid-template-rows: repeat(3, 60px); gap: 8px; pointer-events: auto; }
+        .d-btn { background: #34495e; border: 2px solid #2c3e50; border-radius: 10px; color: white; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; pointer-events: auto;}
         .center-boost { background: #c0392b; border-radius: 50%; font-size: 1.5rem; }
 
         .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 15, 20, 0.98); z-index: 50; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 12px; padding: 20px; }
@@ -72,13 +93,7 @@
         input[type=range] { width: 80%; }
 
         .info-panel { background: var(--ui-dark); padding: 20px; border-radius: 15px; border: 1px solid #444; width: 100%; max-width: 450px; display: block; }
-        
-        /* PC Key Guide */
-        .key-badge { 
-            display: inline-block; padding: 2px 8px; background: #34495e; 
-            border: 1px solid #7f8c8d; border-radius: 4px; font-family: monospace; 
-            color: #ecf0f1; font-size: 0.8rem; margin: 0 2px;
-        }
+        .key-badge { display: inline-block; padding: 2px 8px; background: #34495e; border: 1px solid #7f8c8d; border-radius: 4px; font-family: monospace; color: #ecf0f1; font-size: 0.8rem; margin: 0 2px; }
 
         /* JOYSTICK BOOST BTN */
         .joystick-boost-btn {
@@ -116,9 +131,9 @@
                 </div>
 
                 <div class="hud-grid">
-                    <div class="hud-box">W: <span id="levelDisplay">1</span></div>
-                    <div class="hud-box target-box">T: <span id="savedDisplay">0</span>/<span id="targetDisplay">3</span></div>
-                    <div class="hud-box">S: <span id="scoreDisplay">0</span></div>
+                    <div class="hud-box">Wave: <span id="levelDisplay">1</span></div>
+                    <div class="hud-box target-box">Target: <span id="savedDisplay">0</span>/<span id="targetDisplay">3</span></div>
+                    <div class="hud-box">Score: <span id="scoreDisplay">0</span></div>
                 </div>
 
                 <div class="sub-header">
@@ -132,6 +147,7 @@
                     <canvas id="gameCanvas"></canvas>
                     
                     <div id="overlayDpad" class="d-pad-grid overlay-dpad" style="display: none;">
+                        <div id="dpadHandle" class="dpad-handle">✥</div>
                         <button class="d-btn" data-key="UL">◤</button><button class="d-btn" data-key="UP">▲</button><button class="d-btn" data-key="UR">◥</button>
                         <button class="d-btn" data-key="LEFT">◀</button><button class="d-btn center-boost" data-key="BOOST">🚀</button><button class="d-btn" data-key="RIGHT">▶</button>
                         <button class="d-btn" data-key="DL">◣</button><button class="d-btn" data-key="DOWN">▼</button><button class="d-btn" data-key="DR">◢</button>
@@ -154,7 +170,6 @@
 
         <div class="info-panel">
             <h3>MISSION BRIEFING</h3>
-            
             <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
                 <strong style="color:#3498db">🖥️ PC CONTROLS</strong><br>
                 <div style="margin-top:5px; font-size: 0.9rem;">
@@ -162,10 +177,9 @@
                     Boost: <span class="key-badge">SPACE</span>
                 </div>
             </div>
-
             <hr style="border-color: #444;">
-            <p>🐊 <strong>Crocodile:</strong><br> Eats YOU and any ducklings he touches!</p>
-            <p>🐟 <strong>Pike:</strong><br> Harmless to Mama, but <span style="color:#e74c3c">DEADLY</span> to ducklings if they aren't rescued yet!</p>
+            <p>🐊 <strong>Crocodile:</strong> Eats YOU and any ducklings he touches!</p>
+            <p>🐟 <strong>Pike:</strong> Harmless to Mama, but <span style="color:#e74c3c">DEADLY</span> to ducklings if they aren't rescued yet!</p>
             <a href="../index.html" style="color:var(--accent); text-decoration:none; font-weight:bold;">← Gaming Hub</a>
         </div>
     </div>
@@ -173,7 +187,6 @@
     <div id="settingsModal" class="settings-modal">
         <div class="settings-content">
             <h2 style="color: var(--accent); margin-top:0;">⚙️ SETTINGS</h2>
-            
             <div class="setting-row">
                 <label>Control Type:</label>
                 <div class="toggle-group">
@@ -181,26 +194,23 @@
                     <button class="toggle-btn" id="setDpad" onclick="setControl('dpad')">D-Pad</button>
                 </div>
             </div>
-
             <div class="setting-row" id="dpadPosRow">
                 <label>D-Pad Position:</label>
                 <div class="toggle-group">
                     <button class="toggle-btn" id="setExt" onclick="setDpadPos('external')">Bottom</button>
                     <button class="toggle-btn" id="setOvr" onclick="setDpadPos('overlay')">Overlay</button>
                 </div>
+                <p style="font-size: 0.75rem; margin-top:5px; color:#bdc3c7;">(Tip: In Overlay mode, drag the ✥ icon to move D-pad!)</p>
             </div>
-
             <div class="setting-row" id="sensRow">
                 <label>Joystick Speed:</label>
                 <input type="range" id="sensSlider" min="10" max="60" value="30" oninput="updateSens(this.value)">
                 <span id="sensValue" style="color: var(--accent);">30</span>
             </div>
-
             <div class="setting-row">
                 <label>Sound Effects:</label>
                 <button class="toggle-btn active" id="btnSound" onclick="toggleSound()">ON</button>
             </div>
-
             <button class="btn" style="background:var(--accent); color:black; width:100%; margin-top:15px;" onclick="closeSettings()">SAVE & CLOSE</button>
         </div>
     </div>
@@ -212,12 +222,11 @@
         canvas.width = 400; canvas.height = 400;
 
         const WAVE_TEXT = { 1: "Learn to rescue. Predators are hungry!", 2: "The Pike is here. He scares ducklings away.", 3: "High Stakes! Crocodile eats everything." };
-
         const getStore = (k,d) => localStorage.getItem(k) || d;
 
         let settings = { 
             control: getStore('dControl','joystick'), 
-            dPos: getStore('dPos','external'), // New Setting
+            dPos: getStore('dPos','external'), 
             sens: parseInt(getStore('dSens','30')),
             sound: true
         };
@@ -227,10 +236,8 @@
         let ducklings = []; let history = []; let enemies = [];
         let lostDuckling = { x: 100, y: 100 }; let nest = { x: 340, y: 60, size: 40 };
         let keys = {}; let isBoosting = false;
-        
         let joystick = { active: false, baseX:0, baseY:0, stickX:0, stickY:0, dx:0, dy:0 };
 
-        // AUDIO ENGINE
         let audioCtx;
         const Sfx = {
             play: (t) => {
@@ -255,9 +262,13 @@
             mama.x = 200; mama.y = 200; enemies = []; history = []; ducklings = [];
             
             let speed = 1 + (lvl * 0.15);
-            if (lvl >= 2) enemies.push({ type: 'pike', x: -50, y: 150, s: 2 * speed });
-            if (lvl >= 3) enemies.push({ type: 'croc', x: 500, y: 300, s: -1.2 * speed });
-            if (lvl >= 5) enemies.push({ type: 'croc', x: 500, y: 100, s: -1.5 * speed });
+            // RANDOMIZED START & STAGGERED APPEARANCE
+            // X is randomized negatively so they don't all appear at same exact second
+            // Y is randomized so they don't always use the same lane
+            if (lvl >= 2) enemies.push({ type: 'pike', x: -50 - Math.random()*200, y: 50+Math.random()*300, s: 2 * speed });
+            if (lvl >= 3) enemies.push({ type: 'croc', x: 500 + Math.random()*200, y: 50+Math.random()*300, s: -1.2 * speed });
+            if (lvl >= 5) enemies.push({ type: 'croc', x: 500 + Math.random()*250, y: 50+Math.random()*300, s: -1.5 * speed });
+            if (lvl >= 7) enemies.push({ type: 'pike', x: -50 - Math.random()*300, y: 50+Math.random()*300, s: 2.5 * speed });
             
             spawnBaby(); updateUI(); applyUI();
             document.getElementById("statusOverlay").style.display = "none";
@@ -269,57 +280,41 @@
         function update() {
             if (gameState.paused) return;
             let mx = 0, my = 0;
-            
-            // KEYBOARD
             if (keys.ArrowUp || keys.KeyW) my = -1; if (keys.ArrowDown || keys.KeyS) my = 1;
             if (keys.ArrowLeft || keys.KeyA) mx = -1; if (keys.ArrowRight || keys.KeyD) mx = 1;
-
-            // JOYSTICK
-            if (settings.control === 'joystick' && joystick.active) {
-                mx = joystick.dx; my = joystick.dy;
-            }
+            if (settings.control === 'joystick' && joystick.active) { mx = joystick.dx; my = joystick.dy; }
 
             let s = isBoosting && gameState.boost > 0 ? 7 : 3;
             if (isBoosting) gameState.boost -= 1.5; else if (gameState.boost < 100) gameState.boost += 0.5;
             document.getElementById("boostBar").style.width = gameState.boost + "%";
 
-            // NORMALIZE MOVEMENT
             if(mx!==0 || my!==0) {
                  if(!joystick.active) { let l = Math.sqrt(mx*mx+my*my); if(l>0){mx/=l; my/=l;} }
                  mama.x += mx * s; mama.y += my * s;
             }
-
             mama.x = Math.max(20, Math.min(380, mama.x)); mama.y = Math.max(20, Math.min(380, mama.y));
             history.unshift({x: mama.x, y: mama.y}); if (history.length > 300) history.pop();
 
             enemies.forEach(e => {
                 e.x += e.s;
-                if (e.x > 450 || e.x < -100) e.x = e.s > 0 ? -50 : 500;
+                if (e.x > 450 || e.x < -100) { 
+                    e.x = e.s > 0 ? -50 : 500; 
+                    e.y = 50 + Math.random()*300; // Randomize Y on respawn
+                }
                 
-                // MAMA COLLISION
                 if (Math.hypot(mama.x - e.x, mama.y - e.y) < 30 && e.type === 'croc') { Sfx.play('hit'); loseLife(); }
 
-                // --- NEW FEATURE: PRE-RESCUE DEATH ---
-                // If Pike or Croc hits the unrescued baby, it dies.
+                // Pre-Rescue Death
                 if (Math.hypot(lostDuckling.x - e.x, lostDuckling.y - e.y) < 25) {
-                    Sfx.play('hit'); 
-                    gameState.casualties++; 
-                    spawnBaby(); // Respawn elsewhere
-                    updateUI();
+                    Sfx.play('hit'); gameState.casualties++; spawnBaby(); updateUI();
                 }
 
-                // LINE COLLISION (Post-Rescue)
+                // Line Death
                 ducklings.forEach((d, i) => {
                     let idx = (i+1)*15;
                     if (history[idx] && Math.hypot(history[idx].x - e.x, history[idx].y - e.y) < 25) {
-                        // Pike hits baby = Scary, baby runs away (dies)
-                        // Croc hits baby = Eaten (dies)
-                        Sfx.play('hit'); 
-                        // Logic: Lose everyone from this point backwards
-                        let lostCount = ducklings.length - i;
-                        gameState.casualties += lostCount; 
-                        ducklings.splice(i); // Cut the line
-                        updateUI();
+                        if (e.type === 'croc') { Sfx.play('hit'); gameState.casualties += (ducklings.length - i); }
+                        ducklings.splice(i); updateUI();
                     }
                 });
             });
@@ -345,12 +340,8 @@
             if(keys.ArrowLeft || keys.KeyA || (joystick.active && joystick.dx<0)) ctx.scale(-1,1);
             ctx.fillText("🦢", 0, 0); ctx.restore();
 
-            ducklings.forEach((d,i) => {
-                let p = history[(i+1)*15];
-                if(p) { ctx.font="20px serif"; ctx.fillText("🐥", p.x, p.y); }
-            });
+            ducklings.forEach((d,i) => { let p = history[(i+1)*15]; if(p) { ctx.font="20px serif"; ctx.fillText("🐥", p.x, p.y); } });
 
-            // JOYSTICK DRAW
             if(settings.control==='joystick' && joystick.active){
                 ctx.beginPath(); ctx.arc(joystick.baseX, joystick.baseY, 40, 0, 7);
                 ctx.fillStyle="rgba(255,255,255,0.2)"; ctx.fill();
@@ -396,14 +387,12 @@
             document.getElementById("statusOverlay").style.display = gameState.paused ? "flex" : "none";
             if(gameState.paused) {
                  document.getElementById("statusTitle").innerText = "PAUSED";
-                 document.getElementById("waveTitle").innerText="";
-                 document.getElementById("waveDesc").innerText="";
-                 document.getElementById("mainActionBtn").innerText="RESUME";
-                 document.getElementById("mainActionBtn").onclick = togglePause;
+                 document.getElementById("waveTitle").innerText=""; document.getElementById("waveDesc").innerText="";
+                 document.getElementById("mainActionBtn").innerText="RESUME"; document.getElementById("mainActionBtn").onclick = togglePause;
             } else loop();
         }
 
-        // SETTINGS & UI LOGIC
+        // --- SETTINGS & DRAG LOGIC ---
         function openSettings() { if(gameState.active && !gameState.paused) togglePause(); document.getElementById("settingsModal").style.display="flex"; applyUI(); }
         function closeSettings() { document.getElementById("settingsModal").style.display="none"; applyUI(); }
         function setControl(c) { settings.control = c; localStorage.setItem('dControl', c); applyUI(); }
@@ -413,14 +402,13 @@
 
         function applyUI() {
             const ext = document.getElementById("externalDpad");
-            const inl = document.getElementById("overlayDpad"); // Internal
+            const inl = document.getElementById("overlayDpad");
             const joyBtn = document.getElementById("joyBoostBtn");
             const sensRow = document.getElementById("sensRow");
             const dpadPosRow = document.getElementById("dpadPosRow");
 
             ext.style.display = "none"; inl.style.display = "none"; joyBtn.style.display="none";
 
-            // Update Active States
             document.getElementById("setJoy").className = settings.control === 'joystick' ? 'toggle-btn active' : 'toggle-btn';
             document.getElementById("setDpad").className = settings.control === 'dpad' ? 'toggle-btn active' : 'toggle-btn';
             document.getElementById("setExt").className = settings.dPos === 'external' ? 'toggle-btn active' : 'toggle-btn';
@@ -430,32 +418,70 @@
             document.getElementById("sensSlider").value = settings.sens;
 
             if (settings.control === 'dpad') {
-                sensRow.style.display = 'none'; 
-                dpadPosRow.style.display = 'flex'; // Show D-Pad Position Toggle
-                
+                sensRow.style.display = 'none'; dpadPosRow.style.display = 'flex';
                 if (settings.dPos === 'external') { 
-                    ext.style.display = "flex"; // Bottom Panel
+                    ext.style.display = "flex"; 
                 } else { 
-                    inl.style.display = "grid"; // Overlay
+                    inl.style.display = "grid"; 
+                    // Load Saved Position
+                    const savedLeft = localStorage.getItem('dpadX');
+                    const savedTop = localStorage.getItem('dpadY');
+                    if(savedLeft && savedTop) {
+                        inl.style.bottom = 'auto'; inl.style.left = savedLeft + 'px'; inl.style.top = savedTop + 'px'; inl.style.transform = 'none';
+                    }
                 }
             } else {
-                sensRow.style.display = 'flex'; 
-                dpadPosRow.style.display = 'none';
+                sensRow.style.display = 'flex'; dpadPosRow.style.display = 'none';
                 if(gameState.active && !gameState.paused) joyBtn.style.display="flex";
             }
         }
 
-        // CONTROL HANDLERS (Works for both Overlay and External buttons)
+        // --- DRAG LOGIC FOR OVERLAY DPAD ---
+        const dpadHandle = document.getElementById("dpadHandle");
+        const overlayDpad = document.getElementById("overlayDpad");
+        let isDragging = false;
+        let dragOffsetX = 0; let dragOffsetY = 0;
+
+        dpadHandle.addEventListener('touchstart', (e) => {
+            e.preventDefault(); e.stopPropagation();
+            isDragging = true;
+            const touch = e.touches[0];
+            const rect = overlayDpad.getBoundingClientRect();
+            // Calculate offset so we drag from where we touched, not snapping to top-left
+            dragOffsetX = touch.clientX - rect.left;
+            dragOffsetY = touch.clientY - rect.top;
+            
+            // Switch from CSS positioning to absolute pixel positioning
+            overlayDpad.style.bottom = 'auto';
+            overlayDpad.style.transform = 'none';
+        }, {passive: false});
+
+        document.addEventListener('touchmove', (e) => {
+            if(!isDragging) return;
+            e.preventDefault();
+            const touch = e.touches[0];
+            const newX = touch.clientX - dragOffsetX;
+            const newY = touch.clientY - dragOffsetY;
+            overlayDpad.style.left = newX + 'px';
+            overlayDpad.style.top = newY + 'px';
+        }, {passive: false});
+
+        document.addEventListener('touchend', () => {
+            if(isDragging) {
+                isDragging = false;
+                // Save position
+                localStorage.setItem('dpadX', overlayDpad.style.left.replace('px',''));
+                localStorage.setItem('dpadY', overlayDpad.style.top.replace('px',''));
+            }
+        });
+
+        // INPUT HANDLERS
         document.querySelectorAll('.d-btn').forEach(b => {
             b.onpointerdown = (e) => {
+                if(e.target.id === 'dpadHandle') return;
                 const d = b.dataset.key;
                 if(d === 'BOOST') isBoosting = true;
-                else { 
-                    if(d.includes('U')) keys.ArrowUp=true; 
-                    if(d.includes('D')) keys.ArrowDown=true; 
-                    if(d.includes('L')) keys.ArrowLeft=true; 
-                    if(d.includes('R')) keys.ArrowRight=true; 
-                }
+                else { if(d.includes('U')) keys.ArrowUp=true; if(d.includes('D')) keys.ArrowDown=true; if(d.includes('L')) keys.ArrowLeft=true; if(d.includes('R')) keys.ArrowRight=true; }
             };
             b.onpointerup = b.onpointerleave = () => { isBoosting=false; keys={}; };
         });
@@ -463,7 +489,6 @@
         window.onkeydown = (e) => { keys[e.code]=true; if(e.code==='Space') isBoosting=true; };
         window.onkeyup = (e) => { keys[e.code]=false; if(e.code==='Space') isBoosting=false; };
 
-        // JOYSTICK
         canvas.addEventListener("touchstart", (e) => {
             if (settings.control !== 'joystick' || !gameState.active || gameState.paused) return;
             e.preventDefault();
@@ -481,20 +506,16 @@
             const r = canvas.getBoundingClientRect();
             const tx = (e.touches[0].clientX - r.left) * (canvas.width/r.width);
             const ty = (e.touches[0].clientY - r.top) * (canvas.height/r.height);
-            
-            const dist = Math.hypot(tx - joystick.baseX, ty - joystick.baseY);
-            const angle = Math.atan2(ty - joystick.baseY, tx - joystick.baseX);
-            const lim = Math.min(dist, 40);
-            
-            joystick.stickX = joystick.baseX + Math.cos(angle)*lim;
-            joystick.stickY = joystick.baseY + Math.sin(angle)*lim;
-            
-            const f = Math.min(dist / (70 - settings.sens), 1);
-            joystick.dx = Math.cos(angle)*f; joystick.dy = Math.sin(angle)*f;
+            const d = Math.hypot(tx-joystick.baseX, ty-joystick.baseY);
+            const ang = Math.atan2(ty-joystick.baseY, tx-joystick.baseX);
+            const lim = Math.min(d, 40);
+            joystick.stickX = joystick.baseX + Math.cos(ang)*lim;
+            joystick.stickY = joystick.baseY + Math.sin(ang)*lim;
+            const f = Math.min(d / (70 - settings.sens), 1);
+            joystick.dx = Math.cos(ang)*f; joystick.dy = Math.sin(ang)*f;
         }, {passive:false});
 
         canvas.addEventListener("touchend", () => { joystick.active=false; joystick.dx=0; joystick.dy=0; });
-        
         const jBtn = document.getElementById("joyBoostBtn");
         jBtn.addEventListener("touchstart", (e)=>{e.preventDefault(); isBoosting=true;});
         jBtn.addEventListener("touchend", (e)=>{e.preventDefault(); isBoosting=false;});
